@@ -1,0 +1,205 @@
+<script type="text/javascript">
+	Ext.onReady(function() {
+		Ext.define('model.Territory', {
+			extend : 'Ext.data.TreeModel',
+			entityName : 'Territory',
+			idProperty : 'name',
+			fields : [ {
+				name : "name",
+				convert : undefined
+			} ]
+		});
+		Ext.define('model.Country', {
+			extend : 'Ext.data.TreeModel',
+			entityName : 'Country',
+			idProperty : 'name',
+			fields : [ {
+				name : "name",
+				convert : undefined
+			} ]
+		});
+		Ext.define('model.City', {
+			extend : 'Ext.data.TreeModel',
+			entityName : 'City',
+			idProperty : 'name',
+			fields : [ {
+				name : "name",
+				convert : undefined
+			} ]
+		});
+		var store = Ext.create('Ext.data.TreeStore', {
+			requires : [ 'model.Country', 'model.City' ],
+			model : 'model.Territory',
+			proxy : {
+				type : 'ajax',
+				reader : {
+					type : 'json',
+					typeProperty : 'mtype',
+					root : 'children'
+				},
+				url : ctxPath + '/rest/jsonTree.do'
+			},
+			lazyFill : false
+		});
+		var TreePanel = Ext.create('Ext.tree.Panel', {
+			store : store,
+			rootVisible : true,
+			animate : false,
+			frame : true,
+			title : 'Heterogeneous Geographical Tree',
+			width : 650,
+			height : 400,
+			reserveScrollbar : true,
+			columns : [ {
+				xtype : 'treecolumn',
+				text : 'Name',
+				dataIndex : 'name',
+				flex : 1,
+				width : 300,
+				sortable : true
+			}, {
+				text : 'Type',
+				renderer : function(v, cellValues, record) {
+					return record.entityName;
+				}
+			} ],
+			selModel : {
+				allowDeselect : true,
+				listeners : {
+					selectionchange : function(selModel, selection) {
+						// Go up from the view to the owning TreePanel
+						var panel = selModel.view.up('');
+						panel.onSelectionChange.apply(panel, arguments);
+					}
+				},
+				onKeyEnter : function() {
+					// Go up from the view to the owning TreePanel
+					var panel = this.view.up('');
+					panel.down('#new-name').focus();
+				}
+			},
+			bbar : [ {
+				xtype : 'textfield',
+				itemId : 'new-name',
+				enableKeyEvents : true,
+				listeners : {
+					keydown : function(inputField, e) {
+						// Go up from the view to the owning TreePanel
+						var panel = inputField.up('treepanel');
+						if (e.keyCode === Ext.EventObject.ENTER) {
+							if (!panel.down('#add-button').isDisabled()) {
+								panel.addClick();
+							}
+						} else if (e.keyCode === Ext.EventObject.TAB && e.shiftKey) {
+							e.stopEvent();
+							panel.view.focusRow(panel.selModel.getSelection()[0] || 0);
+						}
+					}
+				}
+			}, {
+				itemId : 'add-button',
+				text : 'Add Territory',
+				handler : function(button) {
+					// Go up from the view to the owning TreePanel
+					var panel = button.up('treepanel');
+					panel.addClick();
+				}
+			} ],
+
+			addClick : function() {
+				var target = this.selModel.getSelection()[0] || this.getRootNode(), inputField = this.down('#new-name'), value = inputField && inputField.getValue(), store = this.getStore(), node;
+
+				if (value) {
+					if (store.getNodeById(value)) {
+						Ext.Msg.alert('Error', 'A node with this name already exists.');
+						return;
+					}
+					node = {
+						name : value
+					};
+
+					if (target.isRoot()) {
+						//Nothing selected -- adding new Territory
+						node.children = [];
+						node.mtype = 'Territory';
+					} else if (target instanceof model.Territory) {
+						// Programatically added - must not try to load over Ajax
+						node.children = [];
+						node.mtype = 'Country';
+					} else if (target instanceof model.Country) {
+						// Adding to the Country level - that is our leaf level
+						node.leaf = true;
+						node.mtype = 'City';
+					}
+
+					node = target.appendChild(node);
+
+					// User might want to see what they've just added!
+					if (!target.isExpanded()) {
+						target.expand(false);
+					}
+					this.selModel.select(node);
+					inputField.reset();
+				}
+			},
+			onSelectionChange : function(selModel, selection) {
+				var button = this.down('#add-button'), selectedNode;
+
+				if (selection.length) {
+					selectedNode = selection[0];
+					if (selectedNode instanceof model.Territory) {
+						button.setText('Add Country');
+						button.enable();
+					} else if (selectedNode instanceof model.Country) {
+						button.setText('Add City');
+						button.enable();
+					} else {
+						button.disable();
+					}
+				} else {
+					button.setText('Add Territory');
+					button.enable();
+				}
+			},
+
+			getActionTip : function(value, meta, rec, rowIdx, colIdx, store, view) {
+				var dataType;
+				switch (Ext.ClassManager.getName(rec)) {
+				case "Territory":
+					dataType = 'territory';
+					break;
+				case "Country":
+					dataType = 'country';
+					break;
+				case "City":
+					dataType = 'city';
+				}
+				return 'Click for info on ' + dataType;
+			},
+
+			onDrillAction : function(view, rowIndex, colIndex, row, event, rec) {
+				var dataType;
+				switch (Ext.ClassManager.getName(rec)) {
+				case "Territory":
+					dataType = 'territory';
+					break;
+				case "Country":
+					dataType = 'country';
+					break;
+				case "City":
+					dataType = 'city';
+				}
+				Ext.Msg.alert('Action', 'Drill into ' + dataType + ' details');
+			}
+		});
+
+		Ext.create('Ext.container.Viewport', {
+			layout : 'border',
+			items : [ {
+				region : 'center',
+				layout : 'fit',
+				items : TreePanel
+			} ]
+		});
+	});
+</script>

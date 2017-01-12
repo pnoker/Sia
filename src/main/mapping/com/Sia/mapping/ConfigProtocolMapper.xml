@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.Sia.dao.ConfigProtocolMapper">
+	<resultMap id="BaseResultMap" type="com.Sia.model.ConfigProtocol">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="data_real_id" property="dataRealId" jdbcType="INTEGER" />
+		<result column="device_id" property="deviceId" jdbcType="INTEGER" />
+		<result column="mod_addr" property="modAddr" jdbcType="INTEGER" />
+		<result column="type" property="type" jdbcType="INTEGER" />
+		<result column="rw" property="rw" jdbcType="INTEGER" />
+		<result column="fre" property="fre" jdbcType="INTEGER" />
+		<result column="at_time" property="atTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<sql id="Example_Where_Clause">
+		<where>
+			<foreach collection="oredCriteria" item="criteria" separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem" open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Update_By_Example_Where_Clause">
+		<where>
+			<foreach collection="example.oredCriteria" item="criteria" separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem" open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Base_Column_List">
+		id, name, data_real_id, device_id, mod_addr, type, rw, fre, at_time
+	</sql>
+	<select id="selectByExample" resultMap="BaseResultMap" parameterType="com.Sia.model.ConfigProtocolExample">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		'true' as QUERYID,
+		<include refid="Base_Column_List" />
+		from config_protocol
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+		<if test="start !=0 or limit!=0">
+			limit #{start},#{limit}
+		</if>
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from config_protocol
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<select id="selectByDataRealId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from config_protocol
+		where data_real_id = #{dataRealId,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from config_protocol
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<delete id="deleteByExample" parameterType="com.Sia.model.ConfigProtocolExample">
+		delete from config_protocol
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</delete>
+	<insert id="insert" parameterType="com.Sia.model.ConfigProtocol">
+		insert into config_protocol (id, name, data_real_id,
+		device_id, mod_addr, type,
+		rw, fre, at_time)
+		values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
+		#{dataRealId,jdbcType=INTEGER},
+		#{deviceId,jdbcType=INTEGER}, #{modAddr,jdbcType=INTEGER}, #{type,jdbcType=INTEGER},
+		#{rw,jdbcType=INTEGER}, #{fre,jdbcType=INTEGER}, #{atTime,jdbcType=TIMESTAMP})
+	</insert>
+	<insert id="insertSelective" parameterType="com.Sia.model.ConfigProtocol">
+		insert into config_protocol
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="dataRealId != null">
+				data_real_id,
+			</if>
+			<if test="deviceId != null">
+				device_id,
+			</if>
+			<if test="modAddr != null">
+				mod_addr,
+			</if>
+			<if test="type != null">
+				type,
+			</if>
+			<if test="rw != null">
+				rw,
+			</if>
+			<if test="fre != null">
+				fre,
+			</if>
+			<if test="atTime != null">
+				at_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="dataRealId != null">
+				#{dataRealId,jdbcType=INTEGER},
+			</if>
+			<if test="deviceId != null">
+				#{deviceId,jdbcType=INTEGER},
+			</if>
+			<if test="modAddr != null">
+				#{modAddr,jdbcType=INTEGER},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=INTEGER},
+			</if>
+			<if test="rw != null">
+				#{rw,jdbcType=INTEGER},
+			</if>
+			<if test="fre != null">
+				#{fre,jdbcType=INTEGER},
+			</if>
+			<if test="atTime != null">
+				#{atTime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<select id="countByExample" parameterType="com.Sia.model.ConfigProtocolExample" resultType="java.lang.Integer">
+		select count(*) from config_protocol
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</select>
+	<update id="updateByExampleSelective" parameterType="map">
+		update config_protocol
+		<set>
+			<if test="record.id != null">
+				id = #{record.id,jdbcType=INTEGER},
+			</if>
+			<if test="record.name != null">
+				name = #{record.name,jdbcType=VARCHAR},
+			</if>
+			<if test="record.dataRealId != null">
+				data_real_id = #{record.dataRealId,jdbcType=INTEGER},
+			</if>
+			<if test="record.deviceId != null">
+				device_id = #{record.deviceId,jdbcType=INTEGER},
+			</if>
+			<if test="record.modAddr != null">
+				mod_addr = #{record.modAddr,jdbcType=INTEGER},
+			</if>
+			<if test="record.type != null">
+				type = #{record.type,jdbcType=INTEGER},
+			</if>
+			<if test="record.rw != null">
+				rw = #{record.rw,jdbcType=INTEGER},
+			</if>
+			<if test="record.fre != null">
+				fre = #{record.fre,jdbcType=INTEGER},
+			</if>
+			<if test="record.atTime != null">
+				at_time = #{record.atTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByExample" parameterType="map">
+		update config_protocol
+		set id = #{record.id,jdbcType=INTEGER},
+		name = #{record.name,jdbcType=VARCHAR},
+		data_real_id = #{record.dataRealId,jdbcType=INTEGER},
+		device_id =
+		#{record.deviceId,jdbcType=INTEGER},
+		mod_addr = #{record.modAddr,jdbcType=INTEGER},
+		type = #{record.type,jdbcType=INTEGER},
+		rw = #{record.rw,jdbcType=INTEGER},
+		fre = #{record.fre,jdbcType=INTEGER},
+		at_time = #{record.atTime,jdbcType=TIMESTAMP}
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByPrimaryKeySelective" parameterType="com.Sia.model.ConfigProtocol">
+		update config_protocol
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="dataRealId != null">
+				data_real_id = #{dataRealId,jdbcType=INTEGER},
+			</if>
+			<if test="deviceId != null">
+				device_id = #{deviceId,jdbcType=INTEGER},
+			</if>
+			<if test="modAddr != null">
+				mod_addr = #{modAddr,jdbcType=INTEGER},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="rw != null">
+				rw = #{rw,jdbcType=INTEGER},
+			</if>
+			<if test="fre != null">
+				fre = #{fre,jdbcType=INTEGER},
+			</if>
+			<if test="atTime != null">
+				at_time = #{atTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.Sia.model.ConfigProtocol">
+		update config_protocol
+		set name = #{name,jdbcType=VARCHAR},
+		data_real_id = #{dataRealId,jdbcType=INTEGER},
+		device_id = #{deviceId,jdbcType=INTEGER},
+		mod_addr = #{modAddr,jdbcType=INTEGER},
+		type = #{type,jdbcType=INTEGER},
+		rw = #{rw,jdbcType=INTEGER},
+		fre = #{fre,jdbcType=INTEGER},
+		at_time = #{atTime,jdbcType=TIMESTAMP}
+		where id =
+		#{id,jdbcType=INTEGER}
+	</update>
+</mapper>

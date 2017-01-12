@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.Sia.dao.StateMapper" >
+  <resultMap id="BaseResultMap" type="com.Sia.model.State" >
+    <id column="node_id" property="nodeId" jdbcType="INTEGER" />
+    <result column="network_up" property="networkUp" jdbcType="TIMESTAMP" />
+    <result column="health_up" property="healthUp" jdbcType="TIMESTAMP" />
+    <result column="data_up" property="dataUp" jdbcType="TIMESTAMP" />
+    <result column="sig_mag" property="sigMag" jdbcType="TINYINT" />
+    <result column="rate" property="rate" jdbcType="TINYINT" />
+    <result column="lost_num" property="lostNum" jdbcType="TINYINT" />
+    <result column="lost_time" property="lostTime" jdbcType="INTEGER" />
+    <result column="dia_result" property="diaResult" jdbcType="TINYINT" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="suggeat" property="suggeat" jdbcType="VARCHAR" />
+    <result column="at_time" property="atTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    node_id, network_up, health_up, data_up, sig_mag, rate, lost_num, lost_time, dia_result, 
+    description, suggeat, at_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.Sia.model.StateExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from state
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from state
+    where node_id = #{nodeId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from state
+    where node_id = #{nodeId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.Sia.model.StateExample" >
+    delete from state
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.Sia.model.State" >
+    insert into state (node_id, network_up, health_up, 
+      data_up, sig_mag, rate, 
+      lost_num, lost_time, dia_result, 
+      description, suggeat, at_time
+      )
+    values (#{nodeId,jdbcType=INTEGER}, #{networkUp,jdbcType=TIMESTAMP}, #{healthUp,jdbcType=TIMESTAMP}, 
+      #{dataUp,jdbcType=TIMESTAMP}, #{sigMag,jdbcType=TINYINT}, #{rate,jdbcType=TINYINT}, 
+      #{lostNum,jdbcType=TINYINT}, #{lostTime,jdbcType=INTEGER}, #{diaResult,jdbcType=TINYINT}, 
+      #{description,jdbcType=VARCHAR}, #{suggeat,jdbcType=VARCHAR}, #{atTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.Sia.model.State" >
+    insert into state
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="nodeId != null" >
+        node_id,
+      </if>
+      <if test="networkUp != null" >
+        network_up,
+      </if>
+      <if test="healthUp != null" >
+        health_up,
+      </if>
+      <if test="dataUp != null" >
+        data_up,
+      </if>
+      <if test="sigMag != null" >
+        sig_mag,
+      </if>
+      <if test="rate != null" >
+        rate,
+      </if>
+      <if test="lostNum != null" >
+        lost_num,
+      </if>
+      <if test="lostTime != null" >
+        lost_time,
+      </if>
+      <if test="diaResult != null" >
+        dia_result,
+      </if>
+      <if test="description != null" >
+        description,
+      </if>
+      <if test="suggeat != null" >
+        suggeat,
+      </if>
+      <if test="atTime != null" >
+        at_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="nodeId != null" >
+        #{nodeId,jdbcType=INTEGER},
+      </if>
+      <if test="networkUp != null" >
+        #{networkUp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="healthUp != null" >
+        #{healthUp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dataUp != null" >
+        #{dataUp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sigMag != null" >
+        #{sigMag,jdbcType=TINYINT},
+      </if>
+      <if test="rate != null" >
+        #{rate,jdbcType=TINYINT},
+      </if>
+      <if test="lostNum != null" >
+        #{lostNum,jdbcType=TINYINT},
+      </if>
+      <if test="lostTime != null" >
+        #{lostTime,jdbcType=INTEGER},
+      </if>
+      <if test="diaResult != null" >
+        #{diaResult,jdbcType=TINYINT},
+      </if>
+      <if test="description != null" >
+        #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="suggeat != null" >
+        #{suggeat,jdbcType=VARCHAR},
+      </if>
+      <if test="atTime != null" >
+        #{atTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.Sia.model.StateExample" resultType="java.lang.Integer" >
+    select count(*) from state
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update state
+    <set >
+      <if test="record.nodeId != null" >
+        node_id = #{record.nodeId,jdbcType=INTEGER},
+      </if>
+      <if test="record.networkUp != null" >
+        network_up = #{record.networkUp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.healthUp != null" >
+        health_up = #{record.healthUp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.dataUp != null" >
+        data_up = #{record.dataUp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.sigMag != null" >
+        sig_mag = #{record.sigMag,jdbcType=TINYINT},
+      </if>
+      <if test="record.rate != null" >
+        rate = #{record.rate,jdbcType=TINYINT},
+      </if>
+      <if test="record.lostNum != null" >
+        lost_num = #{record.lostNum,jdbcType=TINYINT},
+      </if>
+      <if test="record.lostTime != null" >
+        lost_time = #{record.lostTime,jdbcType=INTEGER},
+      </if>
+      <if test="record.diaResult != null" >
+        dia_result = #{record.diaResult,jdbcType=TINYINT},
+      </if>
+      <if test="record.description != null" >
+        description = #{record.description,jdbcType=VARCHAR},
+      </if>
+      <if test="record.suggeat != null" >
+        suggeat = #{record.suggeat,jdbcType=VARCHAR},
+      </if>
+      <if test="record.atTime != null" >
+        at_time = #{record.atTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update state
+    set node_id = #{record.nodeId,jdbcType=INTEGER},
+      network_up = #{record.networkUp,jdbcType=TIMESTAMP},
+      health_up = #{record.healthUp,jdbcType=TIMESTAMP},
+      data_up = #{record.dataUp,jdbcType=TIMESTAMP},
+      sig_mag = #{record.sigMag,jdbcType=TINYINT},
+      rate = #{record.rate,jdbcType=TINYINT},
+      lost_num = #{record.lostNum,jdbcType=TINYINT},
+      lost_time = #{record.lostTime,jdbcType=INTEGER},
+      dia_result = #{record.diaResult,jdbcType=TINYINT},
+      description = #{record.description,jdbcType=VARCHAR},
+      suggeat = #{record.suggeat,jdbcType=VARCHAR},
+      at_time = #{record.atTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.Sia.model.State" >
+    update state
+    <set >
+      <if test="networkUp != null" >
+        network_up = #{networkUp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="healthUp != null" >
+        health_up = #{healthUp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="dataUp != null" >
+        data_up = #{dataUp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sigMag != null" >
+        sig_mag = #{sigMag,jdbcType=TINYINT},
+      </if>
+      <if test="rate != null" >
+        rate = #{rate,jdbcType=TINYINT},
+      </if>
+      <if test="lostNum != null" >
+        lost_num = #{lostNum,jdbcType=TINYINT},
+      </if>
+      <if test="lostTime != null" >
+        lost_time = #{lostTime,jdbcType=INTEGER},
+      </if>
+      <if test="diaResult != null" >
+        dia_result = #{diaResult,jdbcType=TINYINT},
+      </if>
+      <if test="description != null" >
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="suggeat != null" >
+        suggeat = #{suggeat,jdbcType=VARCHAR},
+      </if>
+      <if test="atTime != null" >
+        at_time = #{atTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where node_id = #{nodeId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.Sia.model.State" >
+    update state
+    set network_up = #{networkUp,jdbcType=TIMESTAMP},
+      health_up = #{healthUp,jdbcType=TIMESTAMP},
+      data_up = #{dataUp,jdbcType=TIMESTAMP},
+      sig_mag = #{sigMag,jdbcType=TINYINT},
+      rate = #{rate,jdbcType=TINYINT},
+      lost_num = #{lostNum,jdbcType=TINYINT},
+      lost_time = #{lostTime,jdbcType=INTEGER},
+      dia_result = #{diaResult,jdbcType=TINYINT},
+      description = #{description,jdbcType=VARCHAR},
+      suggeat = #{suggeat,jdbcType=VARCHAR},
+      at_time = #{atTime,jdbcType=TIMESTAMP}
+    where node_id = #{nodeId,jdbcType=INTEGER}
+  </update>
+</mapper>

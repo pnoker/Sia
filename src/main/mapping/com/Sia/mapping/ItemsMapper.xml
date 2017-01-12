@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.Sia.dao.ItemsMapper">
+	<resultMap id="BaseResultMap" type="com.Sia.model.Items">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="parent_id" property="parentId" jdbcType="INTEGER" />
+		<result column="title" property="title" jdbcType="VARCHAR" />
+		<result column="icon" property="icon" jdbcType="VARCHAR" />
+		<result column="is_enable" property="isEnable" jdbcType="INTEGER" />
+		<result column="url" property="url" jdbcType="VARCHAR" />
+		<result column="at_index" property="atIndex" jdbcType="INTEGER" />
+		<result column="at_time" property="atTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id, parent_id, title, icon, is_enable, url, at_index, at_time
+	</sql>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from items
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<select id="selectByParentId" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from items
+		where parent_id = #{parent_id,jdbcType=INTEGER} and is_enable = 1 order by at_index asc
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from items
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<insert id="insert" parameterType="com.Sia.model.Items">
+		insert into items (id, parent_id, title,
+		icon, is_enable, url,
+		at_index, at_time)
+		values (#{id,jdbcType=INTEGER}, #{parentId,jdbcType=INTEGER},
+		#{title,jdbcType=VARCHAR},
+		#{icon,jdbcType=VARCHAR}, #{isEnable,jdbcType=INTEGER}, #{url,jdbcType=VARCHAR},
+		#{atIndex,jdbcType=INTEGER}, #{atTime,jdbcType=TIMESTAMP})
+	</insert>
+	<insert id="insertSelective" parameterType="com.Sia.model.Items">
+		insert into items
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="parentId != null">
+				parent_id,
+			</if>
+			<if test="title != null">
+				title,
+			</if>
+			<if test="icon != null">
+				icon,
+			</if>
+			<if test="isEnable != null">
+				is_enable,
+			</if>
+			<if test="url != null">
+				url,
+			</if>
+			<if test="atIndex != null">
+				at_index,
+			</if>
+			<if test="atTime != null">
+				at_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="parentId != null">
+				#{parentId,jdbcType=INTEGER},
+			</if>
+			<if test="title != null">
+				#{title,jdbcType=VARCHAR},
+			</if>
+			<if test="icon != null">
+				#{icon,jdbcType=VARCHAR},
+			</if>
+			<if test="isEnable != null">
+				#{isEnable,jdbcType=INTEGER},
+			</if>
+			<if test="url != null">
+				#{url,jdbcType=VARCHAR},
+			</if>
+			<if test="atIndex != null">
+				#{atIndex,jdbcType=INTEGER},
+			</if>
+			<if test="atTime != null">
+				#{atTime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.Sia.model.Items">
+		update items
+		<set>
+			<if test="parentId != null">
+				parent_id = #{parentId,jdbcType=INTEGER},
+			</if>
+			<if test="title != null">
+				title = #{title,jdbcType=VARCHAR},
+			</if>
+			<if test="icon != null">
+				icon = #{icon,jdbcType=VARCHAR},
+			</if>
+			<if test="isEnable != null">
+				is_enable = #{isEnable,jdbcType=INTEGER},
+			</if>
+			<if test="url != null">
+				url = #{url,jdbcType=VARCHAR},
+			</if>
+			<if test="atIndex != null">
+				at_index = #{atIndex,jdbcType=INTEGER},
+			</if>
+			<if test="atTime != null">
+				at_time = #{atTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.Sia.model.Items">
+		update items
+		set parent_id = #{parentId,jdbcType=INTEGER},
+		title = #{title,jdbcType=VARCHAR},
+		icon = #{icon,jdbcType=VARCHAR},
+		is_enable =
+		#{isEnable,jdbcType=INTEGER},
+		url = #{url,jdbcType=VARCHAR},
+		at_index = #{atIndex,jdbcType=INTEGER},
+		at_time = #{atTime,jdbcType=TIMESTAMP}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

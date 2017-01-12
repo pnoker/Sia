@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.Sia.dao.AdapterMapper">
+	<resultMap id="BaseResultMap" type="com.Sia.model.Adapter">
+		<id column="node_id" property="nodeId" jdbcType="INTEGER" />
+		<result column="gateway_id" property="gatewayId" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="serial" property="serial" jdbcType="VARCHAR" />
+		<result column="typeserial" property="typeserial" jdbcType="VARCHAR" />
+		<result column="long_address" property="longAddress" jdbcType="VARCHAR" />
+		<result column="sub_address" property="subAddress" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="VARCHAR" />
+		<result column="factory" property="factory" jdbcType="VARCHAR" />
+		<result column="protocl_id" property="protoclId" jdbcType="INTEGER" />
+		<result column="is_enable" property="isEnable" jdbcType="INTEGER" />
+		<result column="at_time" property="atTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<sql id="Example_Where_Clause">
+		<where>
+			<foreach collection="oredCriteria" item="criteria" separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem" open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Update_By_Example_Where_Clause">
+		<where>
+			<foreach collection="example.oredCriteria" item="criteria" separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem" open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Base_Column_List">
+		node_id, gateway_id, name, serial, typeserial, long_address, sub_address, type, factory,
+		protocl_id, is_enable, at_time
+	</sql>
+	<select id="selectByExample" resultMap="BaseResultMap" parameterType="com.Sia.model.AdapterExample">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		'true' as QUERYID,
+		<include refid="Base_Column_List" />
+		from adapter
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+		<if test="start !=0 or limit!=0">
+			limit #{start},#{limit}
+		</if>
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from adapter
+		where node_id = #{nodeId,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from adapter
+		where node_id = #{nodeId,jdbcType=INTEGER}
+	</delete>
+	<delete id="deleteByExample" parameterType="com.Sia.model.AdapterExample">
+		delete from adapter
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</delete>
+	<insert id="insert" parameterType="com.Sia.model.Adapter">
+		insert into adapter (node_id, gateway_id, name,
+		serial, typeserial, long_address,
+		sub_address, type, factory,
+		protocl_id, is_enable, at_time
+		)
+		values
+		(#{nodeId,jdbcType=INTEGER}, #{gatewayId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
+		#{serial,jdbcType=VARCHAR}, #{typeserial,jdbcType=VARCHAR}, #{longAddress,jdbcType=VARCHAR},
+		#{subAddress,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{factory,jdbcType=VARCHAR},
+		#{protoclId,jdbcType=INTEGER}, #{isEnable,jdbcType=INTEGER}, #{atTime,jdbcType=TIMESTAMP}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.Sia.model.Adapter">
+		insert into adapter
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="nodeId != null">
+				node_id,
+			</if>
+			<if test="gatewayId != null">
+				gateway_id,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="serial != null">
+				serial,
+			</if>
+			<if test="typeserial != null">
+				typeserial,
+			</if>
+			<if test="longAddress != null">
+				long_address,
+			</if>
+			<if test="subAddress != null">
+				sub_address,
+			</if>
+			<if test="type != null">
+				type,
+			</if>
+			<if test="factory != null">
+				factory,
+			</if>
+			<if test="protoclId != null">
+				protocl_id,
+			</if>
+			<if test="isEnable != null">
+				is_enable,
+			</if>
+			<if test="atTime != null">
+				at_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="nodeId != null">
+				#{nodeId,jdbcType=INTEGER},
+			</if>
+			<if test="gatewayId != null">
+				#{gatewayId,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="serial != null">
+				#{serial,jdbcType=VARCHAR},
+			</if>
+			<if test="typeserial != null">
+				#{typeserial,jdbcType=VARCHAR},
+			</if>
+			<if test="longAddress != null">
+				#{longAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="subAddress != null">
+				#{subAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=VARCHAR},
+			</if>
+			<if test="factory != null">
+				#{factory,jdbcType=VARCHAR},
+			</if>
+			<if test="protoclId != null">
+				#{protoclId,jdbcType=INTEGER},
+			</if>
+			<if test="isEnable != null">
+				#{isEnable,jdbcType=INTEGER},
+			</if>
+			<if test="atTime != null">
+				#{atTime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<select id="countByExample" parameterType="com.Sia.model.AdapterExample" resultType="java.lang.Integer">
+		select count(*) from adapter
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</select>
+	<update id="updateByExampleSelective" parameterType="map">
+		update adapter
+		<set>
+			<if test="record.nodeId != null">
+				node_id = #{record.nodeId,jdbcType=INTEGER},
+			</if>
+			<if test="record.gatewayId != null">
+				gateway_id = #{record.gatewayId,jdbcType=INTEGER},
+			</if>
+			<if test="record.name != null">
+				name = #{record.name,jdbcType=VARCHAR},
+			</if>
+			<if test="record.serial != null">
+				serial = #{record.serial,jdbcType=VARCHAR},
+			</if>
+			<if test="record.typeserial != null">
+				typeserial = #{record.typeserial,jdbcType=VARCHAR},
+			</if>
+			<if test="record.longAddress != null">
+				long_address = #{record.longAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="record.subAddress != null">
+				sub_address = #{record.subAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="record.type != null">
+				type = #{record.type,jdbcType=VARCHAR},
+			</if>
+			<if test="record.factory != null">
+				factory = #{record.factory,jdbcType=VARCHAR},
+			</if>
+			<if test="record.protoclId != null">
+				protocl_id = #{record.protoclId,jdbcType=INTEGER},
+			</if>
+			<if test="record.isEnable != null">
+				is_enable = #{record.isEnable,jdbcType=INTEGER},
+			</if>
+			<if test="record.atTime != null">
+				at_time = #{record.atTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByExample" parameterType="map">
+		update adapter
+		set node_id = #{record.nodeId,jdbcType=INTEGER},
+		gateway_id = #{record.gatewayId,jdbcType=INTEGER},
+		name = #{record.name,jdbcType=VARCHAR},
+		serial = #{record.serial,jdbcType=VARCHAR},
+		typeserial = #{record.typeserial,jdbcType=VARCHAR},
+		long_address = #{record.longAddress,jdbcType=VARCHAR},
+		sub_address = #{record.subAddress,jdbcType=VARCHAR},
+		type = #{record.type,jdbcType=VARCHAR},
+		factory = #{record.factory,jdbcType=VARCHAR},
+		protocl_id = #{record.protoclId,jdbcType=INTEGER},
+		is_enable = #{record.isEnable,jdbcType=INTEGER},
+		at_time = #{record.atTime,jdbcType=TIMESTAMP}
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByPrimaryKeySelective" parameterType="com.Sia.model.Adapter">
+		update adapter
+		<set>
+			<if test="gatewayId != null">
+				gateway_id = #{gatewayId,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="serial != null">
+				serial = #{serial,jdbcType=VARCHAR},
+			</if>
+			<if test="typeserial != null">
+				typeserial = #{typeserial,jdbcType=VARCHAR},
+			</if>
+			<if test="longAddress != null">
+				long_address = #{longAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="subAddress != null">
+				sub_address = #{subAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=VARCHAR},
+			</if>
+			<if test="factory != null">
+				factory = #{factory,jdbcType=VARCHAR},
+			</if>
+			<if test="protoclId != null">
+				protocl_id = #{protoclId,jdbcType=INTEGER},
+			</if>
+			<if test="isEnable != null">
+				is_enable = #{isEnable,jdbcType=INTEGER},
+			</if>
+			<if test="atTime != null">
+				at_time = #{atTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where node_id = #{nodeId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.Sia.model.Adapter">
+		update adapter
+		set gateway_id = #{gatewayId,jdbcType=INTEGER},
+		name = #{name,jdbcType=VARCHAR},
+		serial = #{serial,jdbcType=VARCHAR},
+		typeserial =
+		#{typeserial,jdbcType=VARCHAR},
+		long_address = #{longAddress,jdbcType=VARCHAR},
+		sub_address = #{subAddress,jdbcType=VARCHAR},
+		type = #{type,jdbcType=VARCHAR},
+		factory = #{factory,jdbcType=VARCHAR},
+		protocl_id = #{protoclId,jdbcType=INTEGER},
+		is_enable = #{isEnable,jdbcType=INTEGER},
+		at_time = #{atTime,jdbcType=TIMESTAMP}
+		where node_id = #{nodeId,jdbcType=INTEGER}
+	</update>
+</mapper>

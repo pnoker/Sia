@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.Sia.dao.DataBaseMapper">
+	<resultMap id="BaseResultMap" type="com.Sia.model.DataBase">
+		<id column="id" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="type" property="type" jdbcType="TINYINT" />
+		<result column="ip" property="ip" jdbcType="VARCHAR" />
+		<result column="port" property="port" jdbcType="INTEGER" />
+		<result column="login" property="login" jdbcType="VARCHAR" />
+		<result column="password" property="password" jdbcType="VARCHAR" />
+		<result column="user" property="user" jdbcType="VARCHAR" />
+		<result column="is_enable" property="isEnable" jdbcType="TINYINT" />
+		<result column="state" property="state" jdbcType="TINYINT" />
+		<result column="at_time" property="atTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<sql id="Example_Where_Clause">
+		<where>
+			<foreach collection="oredCriteria" item="criteria" separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem" open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Update_By_Example_Where_Clause">
+		<where>
+			<foreach collection="example.oredCriteria" item="criteria" separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem" open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Base_Column_List">
+		id, name, type, ip, port, login, password, user, is_enable, state, at_time
+	</sql>
+	<select id="selectByExample" resultMap="BaseResultMap" parameterType="com.Sia.model.DataBaseExample">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		'true' as QUERYID,
+		<include refid="Base_Column_List" />
+		from data_base
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+		<if test="start !=0 or limit!=0">
+			limit #{start},#{limit}
+		</if>
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from data_base
+		where id = #{id,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from data_base
+		where id = #{id,jdbcType=INTEGER}
+	</delete>
+	<delete id="deleteByExample" parameterType="com.Sia.model.DataBaseExample">
+		delete from data_base
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</delete>
+	<insert id="insert" parameterType="com.Sia.model.DataBase">
+		insert into data_base (id, name, type,
+		ip, port, login, password,
+		user, is_enable, state,
+		at_time)
+		values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
+		#{type,jdbcType=TINYINT},
+		#{ip,jdbcType=VARCHAR}, #{port,jdbcType=INTEGER}, #{login,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+		#{user,jdbcType=VARCHAR}, #{isEnable,jdbcType=TINYINT},
+		#{state,jdbcType=TINYINT},
+		#{atTime,jdbcType=TIMESTAMP})
+	</insert>
+	<insert id="insertSelective" parameterType="com.Sia.model.DataBase">
+		insert into data_base
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="type != null">
+				type,
+			</if>
+			<if test="ip != null">
+				ip,
+			</if>
+			<if test="port != null">
+				port,
+			</if>
+			<if test="login != null">
+				login,
+			</if>
+			<if test="password != null">
+				password,
+			</if>
+			<if test="user != null">
+				user,
+			</if>
+			<if test="isEnable != null">
+				is_enable,
+			</if>
+			<if test="state != null">
+				state,
+			</if>
+			<if test="atTime != null">
+				at_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=TINYINT},
+			</if>
+			<if test="ip != null">
+				#{ip,jdbcType=VARCHAR},
+			</if>
+			<if test="port != null">
+				#{port,jdbcType=INTEGER},
+			</if>
+			<if test="login != null">
+				#{login,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				#{password,jdbcType=VARCHAR},
+			</if>
+			<if test="user != null">
+				#{user,jdbcType=VARCHAR},
+			</if>
+			<if test="isEnable != null">
+				#{isEnable,jdbcType=TINYINT},
+			</if>
+			<if test="state != null">
+				#{state,jdbcType=TINYINT},
+			</if>
+			<if test="atTime != null">
+				#{atTime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<select id="countByExample" parameterType="com.Sia.model.DataBaseExample" resultType="java.lang.Integer">
+		select count(*) from data_base
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</select>
+	<update id="updateByExampleSelective" parameterType="map">
+		update data_base
+		<set>
+			<if test="record.id != null">
+				id = #{record.id,jdbcType=INTEGER},
+			</if>
+			<if test="record.name != null">
+				name = #{record.name,jdbcType=VARCHAR},
+			</if>
+			<if test="record.type != null">
+				type = #{record.type,jdbcType=TINYINT},
+			</if>
+			<if test="record.ip != null">
+				ip = #{record.ip,jdbcType=VARCHAR},
+			</if>
+			<if test="record.port != null">
+				port = #{record.port,jdbcType=INTEGER},
+			</if>
+			<if test="record.login != null">
+				login = #{record.login,jdbcType=VARCHAR},
+			</if>
+			<if test="record.password != null">
+				password = #{record.password,jdbcType=VARCHAR},
+			</if>
+			<if test="record.user != null">
+				user = #{record.user,jdbcType=VARCHAR},
+			</if>
+			<if test="record.isEnable != null">
+				is_enable = #{record.isEnable,jdbcType=TINYINT},
+			</if>
+			<if test="record.state != null">
+				state = #{record.state,jdbcType=TINYINT},
+			</if>
+			<if test="record.atTime != null">
+				at_time = #{record.atTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByExample" parameterType="map">
+		update data_base
+		set id = #{record.id,jdbcType=INTEGER},
+		name = #{record.name,jdbcType=VARCHAR},
+		type = #{record.type,jdbcType=TINYINT},
+		ip = #{record.ip,jdbcType=VARCHAR},
+		port =
+		#{record.port,jdbcType=INTEGER},
+		login = #{record.login,jdbcType=VARCHAR},
+		password = #{record.password,jdbcType=VARCHAR},
+		user = #{record.user,jdbcType=VARCHAR},
+		is_enable =
+		#{record.isEnable,jdbcType=TINYINT},
+		state = #{record.state,jdbcType=TINYINT},
+		at_time = #{record.atTime,jdbcType=TIMESTAMP}
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByPrimaryKeySelective" parameterType="com.Sia.model.DataBase">
+		update data_base
+		<set>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				type = #{type,jdbcType=TINYINT},
+			</if>
+			<if test="ip != null">
+				ip = #{ip,jdbcType=VARCHAR},
+			</if>
+			<if test="port != null">
+				port = #{port,jdbcType=INTEGER},
+			</if>
+			<if test="login != null">
+				login = #{login,jdbcType=VARCHAR},
+			</if>
+			<if test="password != null">
+				password = #{password,jdbcType=VARCHAR},
+			</if>
+			<if test="user != null">
+				user = #{user,jdbcType=VARCHAR},
+			</if>
+			<if test="isEnable != null">
+				is_enable = #{isEnable,jdbcType=TINYINT},
+			</if>
+			<if test="state != null">
+				state = #{state,jdbcType=TINYINT},
+			</if>
+			<if test="atTime != null">
+				at_time = #{atTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.Sia.model.DataBase">
+		update data_base
+		set name = #{name,jdbcType=VARCHAR},
+		type = #{type,jdbcType=TINYINT},
+		ip = #{ip,jdbcType=VARCHAR},
+		port = #{port,jdbcType=INTEGER},
+		login = #{login,jdbcType=VARCHAR},
+		password = #{password,jdbcType=VARCHAR},
+		user = #{user,jdbcType=VARCHAR},
+		is_enable = #{isEnable,jdbcType=TINYINT},
+		state = #{state,jdbcType=TINYINT},
+		at_time =
+		#{atTime,jdbcType=TIMESTAMP}
+		where id = #{id,jdbcType=INTEGER}
+	</update>
+</mapper>

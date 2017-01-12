@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.Sia.dao.DataRealMapper">
+	<resultMap id="BaseResultMap" type="com.Sia.model.DataReal">
+		<id column="node_id" property="nodeId" jdbcType="INTEGER" />
+		<result column="adapter_id" property="adapterId" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="value_type" property="valueType" jdbcType="VARCHAR" />
+		<result column="write_able" property="writeAble" jdbcType="VARCHAR" />
+		<result column="tag" property="tag" jdbcType="TINYINT" />
+		<result column="value" property="value" jdbcType="VARCHAR" />
+		<result column="protocol_id" property="protocolId" jdbcType="INTEGER" />
+		<result column="at_time" property="atTime" jdbcType="TIMESTAMP" />
+	</resultMap>
+	<sql id="Example_Where_Clause">
+		<where>
+			<foreach collection="oredCriteria" item="criteria" separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem" open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Update_By_Example_Where_Clause">
+		<where>
+			<foreach collection="example.oredCriteria" item="criteria" separator="or">
+				<if test="criteria.valid">
+					<trim prefix="(" suffix=")" prefixOverrides="and">
+						<foreach collection="criteria.criteria" item="criterion">
+							<choose>
+								<when test="criterion.noValue">
+									and ${criterion.condition}
+								</when>
+								<when test="criterion.singleValue">
+									and ${criterion.condition} #{criterion.value}
+								</when>
+								<when test="criterion.betweenValue">
+									and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+								</when>
+								<when test="criterion.listValue">
+									and ${criterion.condition}
+									<foreach collection="criterion.value" item="listItem" open="(" close=")" separator=",">
+										#{listItem}
+									</foreach>
+								</when>
+							</choose>
+						</foreach>
+					</trim>
+				</if>
+			</foreach>
+		</where>
+	</sql>
+	<sql id="Base_Column_List">
+		node_id, adapter_id, name, value_type, write_able, tag, value, protocol_id, at_time
+	</sql>
+	<select id="selectByExample" resultMap="BaseResultMap" parameterType="com.Sia.model.DataRealExample">
+		select
+		<if test="distinct">
+			distinct
+		</if>
+		'true' as QUERYID,
+		<include refid="Base_Column_List" />
+		from data_real
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+		<if test="orderByClause != null">
+			order by ${orderByClause}
+		</if>
+		<if test="start !=0 or limit!=0">
+			limit #{start},#{limit}
+		</if>
+	</select>
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		select
+		<include refid="Base_Column_List" />
+		from data_real
+		where node_id = #{nodeId,jdbcType=INTEGER}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+		delete from data_real
+		where node_id = #{nodeId,jdbcType=INTEGER}
+	</delete>
+	<delete id="deleteByExample" parameterType="com.Sia.model.DataRealExample">
+		delete from data_real
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</delete>
+	<insert id="insert" parameterType="com.Sia.model.DataReal">
+		insert into data_real (node_id, adapter_id, name,
+		value_type, write_able, tag,
+		value, protocol_id, at_time
+		)
+		values (#{nodeId,jdbcType=INTEGER},
+		#{adapterId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR},
+		#{valueType,jdbcType=VARCHAR}, #{writeAble,jdbcType=VARCHAR}, #{tag,jdbcType=TINYINT},
+		#{value,jdbcType=VARCHAR},
+		#{protocolId,jdbcType=INTEGER}, #{atTime,jdbcType=TIMESTAMP}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.Sia.model.DataReal">
+		insert into data_real
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="nodeId != null">
+				node_id,
+			</if>
+			<if test="adapterId != null">
+				adapter_id,
+			</if>
+			<if test="name != null">
+				name,
+			</if>
+			<if test="valueType != null">
+				value_type,
+			</if>
+			<if test="writeAble != null">
+				write_able,
+			</if>
+			<if test="tag != null">
+				tag,
+			</if>
+			<if test="value != null">
+				value,
+			</if>
+			<if test="protocolId != null">
+				protocol_id,
+			</if>
+			<if test="atTime != null">
+				at_time,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="nodeId != null">
+				#{nodeId,jdbcType=INTEGER},
+			</if>
+			<if test="adapterId != null">
+				#{adapterId,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				#{name,jdbcType=VARCHAR},
+			</if>
+			<if test="valueType != null">
+				#{valueType,jdbcType=VARCHAR},
+			</if>
+			<if test="writeAble != null">
+				#{writeAble,jdbcType=VARCHAR},
+			</if>
+			<if test="tag != null">
+				#{tag,jdbcType=TINYINT},
+			</if>
+			<if test="value != null">
+				#{value,jdbcType=VARCHAR},
+			</if>
+			<if test="protocolId != null">
+				#{protocolId,jdbcType=INTEGER},
+			</if>
+			<if test="atTime != null">
+				#{atTime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<select id="countByExample" parameterType="com.Sia.model.DataRealExample" resultType="java.lang.Integer">
+		select count(*) from data_real
+		<if test="_parameter != null">
+			<include refid="Example_Where_Clause" />
+		</if>
+	</select>
+	<update id="updateByExampleSelective" parameterType="map">
+		update data_real
+		<set>
+			<if test="record.nodeId != null">
+				node_id = #{record.nodeId,jdbcType=INTEGER},
+			</if>
+			<if test="record.adapterId != null">
+				adapter_id = #{record.adapterId,jdbcType=INTEGER},
+			</if>
+			<if test="record.name != null">
+				name = #{record.name,jdbcType=VARCHAR},
+			</if>
+			<if test="record.valueType != null">
+				value_type = #{record.valueType,jdbcType=VARCHAR},
+			</if>
+			<if test="record.writeAble != null">
+				write_able = #{record.writeAble,jdbcType=VARCHAR},
+			</if>
+			<if test="record.tag != null">
+				tag = #{record.tag,jdbcType=TINYINT},
+			</if>
+			<if test="record.value != null">
+				value = #{record.value,jdbcType=VARCHAR},
+			</if>
+			<if test="record.protocolId != null">
+				protocol_id = #{record.protocolId,jdbcType=INTEGER},
+			</if>
+			<if test="record.atTime != null">
+				at_time = #{record.atTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByExample" parameterType="map">
+		update data_real
+		set node_id = #{record.nodeId,jdbcType=INTEGER},
+		adapter_id = #{record.adapterId,jdbcType=INTEGER},
+		name = #{record.name,jdbcType=VARCHAR},
+		value_type =
+		#{record.valueType,jdbcType=VARCHAR},
+		write_able = #{record.writeAble,jdbcType=VARCHAR},
+		tag = #{record.tag,jdbcType=TINYINT},
+		value = #{record.value,jdbcType=VARCHAR},
+		protocol_id =
+		#{record.protocolId,jdbcType=INTEGER},
+		at_time = #{record.atTime,jdbcType=TIMESTAMP}
+		<if test="_parameter != null">
+			<include refid="Update_By_Example_Where_Clause" />
+		</if>
+	</update>
+	<update id="updateByPrimaryKeySelective" parameterType="com.Sia.model.DataReal">
+		update data_real
+		<set>
+			<if test="adapterId != null">
+				adapter_id = #{adapterId,jdbcType=INTEGER},
+			</if>
+			<if test="name != null">
+				name = #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="valueType != null">
+				value_type = #{valueType,jdbcType=VARCHAR},
+			</if>
+			<if test="writeAble != null">
+				write_able = #{writeAble,jdbcType=VARCHAR},
+			</if>
+			<if test="tag != null">
+				tag = #{tag,jdbcType=TINYINT},
+			</if>
+			<if test="value != null">
+				value = #{value,jdbcType=VARCHAR},
+			</if>
+			<if test="protocolId != null">
+				protocol_id = #{protocolId,jdbcType=INTEGER},
+			</if>
+			<if test="atTime != null">
+				at_time = #{atTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		where node_id = #{nodeId,jdbcType=INTEGER}
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.Sia.model.DataReal">
+		update data_real
+		set adapter_id = #{adapterId,jdbcType=INTEGER},
+		name = #{name,jdbcType=VARCHAR},
+		value_type = #{valueType,jdbcType=VARCHAR},
+		write_able = #{writeAble,jdbcType=VARCHAR},
+		tag = #{tag,jdbcType=TINYINT},
+		value = #{value,jdbcType=VARCHAR},
+		protocol_id = #{protocolId,jdbcType=INTEGER},
+		at_time = #{atTime,jdbcType=TIMESTAMP}
+		where
+		node_id = #{nodeId,jdbcType=INTEGER}
+	</update>
+</mapper>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-4.1.xsd 
+		http://www.springframework.org/schema/util 
+		http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<!-- shiro start -->
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+	<bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+		<property name="cacheManagerConfigFile" value="classpath:ehcache.xml" />
+	</bean>
+	<bean id="credentialsMatcher" class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+		<property name="hashAlgorithmName" value="SHA-256" />
+	</bean>
+	<bean id="iniRealm" class="com.boonya.shiro.security.CurrentIniRealm">
+		<constructor-arg type="java.lang.String" value="classpath:shiro.ini" />
+		<property name="credentialsMatcher" ref="credentialsMatcher" />
+	</bean>
+	<bean id="userRealm" class="com.boonya.shiro.security.UserRealm" />
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realms">
+			<list>
+				<ref bean="iniRealm" />
+				<ref bean="userRealm" />
+			</list>
+		</property>
+		<property name="cacheManager" ref="cacheManager" />
+	</bean>
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager" />
+		<property name="loginUrl" value="/login" />
+		<property name="successUrl" value="/maps/main.html"></property>
+		<property name="unauthorizedUrl" value="/unauthorized"></property>
+		<property name="filters">
+			<util:map>
+				<entry key="anAlias">
+					<bean class="org.apache.shiro.web.filter.authc.PassThruAuthenticationFilter" />
+				</entry>
+			</util:map>
+		</property>
+		<property name="filterChainDefinitions">
+			<value>
+				/unauthorized=anon
+				/validate/code*=anon
+				/login/**=anon
+				/image/**=anon
+				/js/**=anon
+				/css/**=anon
+				/common/**=anon
+				/index.htm* = anon
+				/maps/**=authc
+			</value>
+		</property>
+	</bean>
+</beans>

@@ -1,0 +1,417 @@
+<script type="text/javascript">
+	var gatewayStore, store;
+	var customWin = function (text, type, data) {
+		var FormPanel = Ext.create('Ext.form.FormPanel', {
+			frame: true,
+			width: 400,
+			bodyPadding: 10,
+			layout: 'form',
+			items: [{
+				xtype: 'textfield',
+				name: 'nodeId',
+				fieldLabel: '节点NodeID',
+				regex: /^\d{5,6}$/,
+				regexText: '请输入数字，长度为5~6位',
+				allowBlank: false,
+				blankText: '节点NodeID不能为空！',
+				value: ''
+			}, {
+				xtype: 'combobox',
+				store: gatewayStore,
+				name: 'gatewayId',
+				fieldLabel: '网关NodeID',
+				allowBlank: false,
+				editable: false,
+				blankText: '适配器必须关联一个网关节点NodeID！',
+				displayField: 'name',
+				valueField: 'nodeId'
+			}, {
+				xtype: 'textfield',
+				name: 'name',
+				fieldLabel: '适配器名称',
+				maxLength: 8,
+				allowBlank: false,
+				blankText: '适配器名称不能为空！',
+				value: ''
+			}, {
+				xtype: 'textfield',
+				name: 'serial',
+				fieldLabel: '显示位号',
+				allowBlank: false,
+				blankText: '适配器名称不能为空！',
+				value: ''
+			}, {
+				xtype: 'textfield',
+				name: 'typeserial',
+				fieldLabel: '存储位号',
+				allowBlank: false,
+				blankText: '适配器名称不能为空！',
+				value: ''
+			}, {
+				xtype: 'textfield',
+				name: 'longAddress',
+				fieldLabel: '设备长地址',
+				regex: /^[0-9a-fA-F]{16}$/,
+				regexText: '请输入正确的设备长地址',
+				allowBlank: false,
+				blankText: '设备长地址不能为空！',
+				value: ''
+			}, {
+				xtype: 'textfield',
+				name: 'subAddress',
+				fieldLabel: '从站地址',
+				regex: /^[0-9a-fA-F]{2,}$/,
+				regexText: '请输入正确的从站地址',
+				value: 'FF'
+			}, {
+				xtype: 'textfield',
+				name: 'type',
+				fieldLabel: '仪表类型',
+				maxLength: 8,
+				allowBlank: false,
+				blankText: '适配器名称不能为空！',
+				value: ''
+			}, {
+				xtype: 'textfield',
+				name: 'factory',
+				fieldLabel: '生产厂家',
+				maxLength: 8,
+				allowBlank: false,
+				blankText: '适配器名称不能为空！',
+				value: ''
+			}],
+			buttons: [{
+				text: text,
+				type: 'submit',
+				handler: function () {
+					if (FormPanel.form.isValid()) {
+						Ext.Ajax.request({
+							method: 'get',
+							url: ctxPath + '/adapter/' + type + '.do',
+							params: {
+								nodeId: FormPanel.getForm().findField('nodeId').getValue(),
+								gatewayId: FormPanel.getForm().findField('gatewayId').getValue(),
+								name: encodeURI(FormPanel.getForm().findField('name').getValue()),
+								serial: FormPanel.getForm().findField('serial').getValue(),
+								typeserial: FormPanel.getForm().findField('typeserial').getValue(),
+								longAddress: FormPanel.getForm().findField('longAddress').getValue(),
+								subAddress: FormPanel.getForm().findField('subAddress').getValue(),
+								type: encodeURI(FormPanel.getForm().findField('type').getValue()),
+								factory: encodeURI(FormPanel.getForm().findField('factory').getValue())
+							},
+							success: function (response) {
+								var responseText = Ext.decode(response.responseText);
+								if (responseText.result != 'Y') {
+									Ext.Msg.alert('错误！', responseText.message);
+								} else {
+									Ext.Msg.alert('成功！', responseText.message);
+									FormPanel.reset();
+									Win.close();
+									store.loadPage(1);
+								}
+							}
+						});
+					}
+				}
+			}, {
+				text: '重置',
+				handler: function () {
+					if (type != 'update') {
+						FormPanel.reset();
+					} else {
+						FormPanel.getForm().findField('nodeId').setEditable(false);
+						FormPanel.getForm().findField('gatewayId').setEditable(false);
+						FormPanel.getForm().findField('nodeId').setValue(data.nodeId);
+						FormPanel.getForm().findField('gatewayId').setValue(data.gatewayId);
+						FormPanel.getForm().findField('name').setValue(data.name);
+						FormPanel.getForm().findField('serial').setValue(data.serial);
+						FormPanel.getForm().findField('typeserial').setValue(data.typeserial);
+						FormPanel.getForm().findField('longAddress').setValue(data.longAddress);
+						FormPanel.getForm().findField('subAddress').setValue(data.subAddress);
+						FormPanel.getForm().findField('type').setValue(data.type);
+						FormPanel.getForm().findField('factory').setValue(data.factory);
+					}
+
+				}
+			}, {
+				text: '取消',
+				handler: function () {
+					FormPanel.reset();
+					Win.close();
+				}
+			}]
+		});
+
+		var Win = new Ext.Window({
+			layout: 'fit',
+			width: 500,
+			height: 350,
+			constrain: true,
+			resizable: false,
+			closable: false,
+			modal: true,
+			plain: true,
+			items: FormPanel,
+			title: text + '适配器',
+			listeners: {
+				beforeshow: function (win, opts) {
+				}
+			}
+		});
+
+		if (type != 'add') {
+			FormPanel.getForm().findField('nodeId').setEditable(false);
+			FormPanel.getForm().findField('gatewayId').setEditable(false);
+			FormPanel.getForm().findField('nodeId').setValue(data.nodeId);
+			FormPanel.getForm().findField('gatewayId').setValue(data.gatewayId);
+			FormPanel.getForm().findField('name').setValue(data.name);
+			FormPanel.getForm().findField('serial').setValue(data.serial);
+			FormPanel.getForm().findField('typeserial').setValue(data.typeserial);
+			FormPanel.getForm().findField('longAddress').setValue(data.longAddress);
+			FormPanel.getForm().findField('subAddress').setValue(data.subAddress);
+			FormPanel.getForm().findField('type').setValue(data.type);
+			FormPanel.getForm().findField('factory').setValue(data.factory);
+		}
+		Win.show();
+	}
+	Ext.onReady(function () {
+		var pageSize = 14;
+
+		gatewayStore = Ext.create('Ext.data.JsonStore', {
+			model: 'model.Gateway',
+			folderSort: true,
+			proxy: {
+				type: 'ajax',
+				reader: {
+					type: 'json',
+					root: 'root',
+					totalProperty: 'total'
+				},
+				url: ctxPath + '/gateWay/list.do'
+			},
+			listeners: {
+				load: function (store, records, successful, eOpts) {
+					for (var i = 0; i < records.length; i++) {
+						var role = records[i].get('roleid');
+						records[i].set('name', records[i].get('nodeId') + ' -> ' + records[i].get('name'));
+					}
+				}
+			}
+		});
+
+		store = Ext.create('Ext.data.JsonStore', {
+			model: 'model.Adapter',
+			pageSize: pageSize,
+			folderSort: true,
+			proxy: {
+				type: 'ajax',
+				reader: {
+					type: 'json',
+					root: 'root',
+					totalProperty: 'total'
+				},
+				url: ctxPath + '/adapter/list.do'
+			}
+		});
+
+		store.loadPage(1);
+
+		var dataPagingBar = new Ext.PagingToolbar({
+			pageSize: pageSize,
+			store: store,
+			displayInfo: true,
+			beforePageText: '第',
+			afterPageText: '页，共{0}页',
+			displayMsg: '显示第 {0} 条到 {1} 条记录，一共 {2} 条',
+			emptyMsg: "总共 0 条"
+		});
+
+		var toolbar = Ext.create('Ext.toolbar.Toolbar', {
+			dock: 'top',
+			items: [{
+				xtype: 'container',
+				layout: 'hbox',
+				defaultType: 'textfield',
+				items: [${searchItems}]
+			}, '-', {
+				xtype: 'button',
+				text: '查找',
+				icon: '${rc.contextPath}/images/icon/zoom.png'
+			}, {
+				xtype: 'button',
+				text: '重置',
+				icon: '${rc.contextPath}/images/icon/page_white_refresh.png'
+			}, {
+				xtype: 'button',
+				text: '刷新',
+				icon: '${rc.contextPath}/images/icon/arrow_refresh.png'
+			}]
+		});
+
+		var GridPanel = Ext.create('Ext.grid.Panel', {
+			id: 'gridPanel',
+			store: store,
+			scrollable: 'true',
+			columnLines: true,
+			viewConfig: {
+				loadMask: true
+			},
+			selModel: {
+				selType: 'checkboxmodel'
+			},
+			dockedItems: toolbar,
+			bbar: dataPagingBar,
+			columns: [{
+				text: '序号',
+				xtype: 'rownumberer',
+				width: '5%',
+				align: 'center'
+			}, {
+				text: '适配器名称',
+				dataIndex: 'name',
+				sortable: true,
+				width: '8%',
+				align: 'center'
+			}, {
+				text: '节点NodeID',
+				sortable: true,
+				dataIndex: 'nodeId',
+				width: '7%',
+				align: 'center'
+			}, {
+				text: '网关节点NodeID',
+				sortable: true,
+				dataIndex: 'gatewayId',
+				width: '10%',
+				align: 'center'
+			}, {
+				text: '显示位号',
+				sortable: true,
+				dataIndex: 'serial',
+				width: '8%',
+				align: 'center'
+			}, {
+				text: '存储位号',
+				sortable: true,
+				dataIndex: 'typeserial',
+				width: '8%',
+				align: 'center'
+			}, {
+				text: '设备长地址',
+				sortable: true,
+				dataIndex: 'longAddress',
+				width: '10%',
+				align: 'center'
+			}, {
+				text: '从站地址',
+				sortable: true,
+				dataIndex: 'subAddress',
+				width: '6%',
+				align: 'center'
+			}, {
+				text: '仪表类型',
+				sortable: true,
+				dataIndex: 'type',
+				width: '6%',
+				align: 'center'
+			}, {
+				text: '生产厂家',
+				sortable: true,
+				dataIndex: 'factory',
+				width: '6%',
+				align: 'center'
+			}, {
+				text: '协议类型',
+				sortable: true,
+				dataIndex: 'protoclId',
+				width: '5%',
+				align: 'center',
+			}, {
+				text: '是否启用',
+				sortable: true,
+				dataIndex: 'isEnable',
+				width: '5%',
+				align: 'center',
+				renderer: function (value) {
+					if (value == '1') {
+						return '<img src="${rc.contextPath}/images/icon_ok_enable.png" style="width: 20px;">';
+					}
+					if (value == '0') {
+						return '<img src="${rc.contextPath}/images/icon_ok_unable.png" style="width: 20px;">';
+					}
+				}
+			}, {
+				text: '修改时间',
+				dataIndex: 'atTime',
+				width: '14%',
+				align: 'center',
+				renderer: function (value) {
+					return new Date(value).Format("yyyy-MM-dd hh:mm:ss");
+				}
+			}]
+		});
+		Ext.create('Ext.container.Viewport', {
+			layout: 'border',
+			items: [{
+				region: 'center',
+				layout: 'fit',
+				items: GridPanel
+			}]
+		});
+
+		function onAddClick() {
+			customWin('新增', 'add', 0);
+		}
+		function onDeleteClick() {
+			var sel = GridPanel.getSelection();
+			var size = sel.length;
+			if (size > 0) {
+				Ext.MessageBox.confirm('温馨提示', '确定删除已选的' + size + '条记录?', function (btn) {
+					if (btn == 'yes') {
+						var nodes = '';
+						for (var m = 0; m < size; m++) {
+							nodes += sel[m].data.nodeId + ',';
+						}
+						Ext.Ajax.request({
+							method: 'get',
+							url: ctxPath + '/adapter/delete.do',
+							params: {
+								nodeId: nodes
+							},
+							success: function (response) {
+								var responseText = Ext.decode(response.responseText);
+								if (responseText.result != 'Y') {
+									Ext.Msg.alert('错误！', responseText.message);
+								} else {
+									Ext.Msg.alert('成功！', responseText.message);
+									store.reload();
+								}
+							}
+						});
+					} else {
+						showToast(Ext.String.format('您取消了本次操作！'));
+					}
+				}, this);
+			} else {
+				failureMsgAlert('编辑之前请至少选择一条记录！');
+			}
+		}
+
+		function onUpdateClick() {
+			var sel = GridPanel.getSelection();
+			var size = sel.length
+			if (size > 1) {
+				failureMsgAlert('最多选择一条记录进行编辑！');
+			} else if (size < 1) {
+				failureMsgAlert('编辑之前请至少选择一条记录！');
+			} else {
+				customWin('修改', 'update', sel[0].data);
+			}
+		}
+
+		function onReloadClick() {
+			store.reload();
+			showToast(Ext.String.format('刷新成功！'));
+		}
+	});
+</script>

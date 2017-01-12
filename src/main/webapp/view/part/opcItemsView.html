@@ -1,0 +1,221 @@
+<script type="text/javascript">
+	var store;
+
+	Ext.onReady(function () {
+		var pageSize = 14;
+
+		store = Ext.create('Ext.data.JsonStore', {
+			id: 'store',
+			model: 'model.Gateway',
+			pageSize: pageSize,
+			folderSort: true,
+			proxy: {
+				type: 'ajax',
+				reader: {
+					type: 'json',
+					root: 'root',
+					totalProperty: 'total'
+				},
+				url: ctxPath + '/opcItems/list.do'
+			}
+		});
+
+		store.loadPage(1);
+
+		var dataPagingBar = new Ext.PagingToolbar({
+			pageSize: pageSize,
+			store: store,
+			displayInfo: true,
+			beforePageText: '第',
+			afterPageText: '页，共{0}页',
+			displayMsg: '显示第 {0} 条到 {1} 条记录，一共 {2} 条',
+			emptyMsg: "总共 0 条"
+		});
+
+
+
+		var toolbar = Ext.create('Ext.toolbar.Toolbar', {
+			dock: 'top',
+			items: [{
+				xtype: 'container',
+				layout: 'hbox',
+				defaultType: 'textfield',
+				items: [${searchItems}]
+			}, '-', {
+				xtype: 'button',
+				text: '查找',
+				icon: '${rc.contextPath}/images/icon/zoom.png'
+			}, {
+				xtype: 'button',
+				text: '重置',
+				icon: '${rc.contextPath}/images/icon/page_white_refresh.png'
+			}, {
+				xtype: 'button',
+				text: '刷新',
+				icon: '${rc.contextPath}/images/icon/arrow_refresh.png'
+			}]
+		});
+
+		var GridPanel = Ext.create('Ext.grid.Panel', {
+			id: 'gridPanel',
+			store: store,
+			scrollable: 'true',
+			columnLines: true,
+			viewConfig: {
+				loadMask: true
+			},
+			selModel: {
+				selType: 'checkboxmodel'
+			},
+			dockedItems: toolbar,
+			bbar: dataPagingBar,
+			columns: [{
+				text: '序号',
+				xtype: 'rownumberer',
+				width: '5%',
+				align: 'center'
+			}, {
+				text: '点位名称',
+				dataIndex: 'name',
+				sortable: true,
+				width: '15%',
+				align: 'center'
+			}, {
+				text: '点位节点ID',
+				sortable: true,
+				dataIndex: 'nodeId',
+				width: '15%',
+				align: 'center'
+			}, {
+				text: '适配器节点',
+				sortable: true,
+				dataIndex: 'adapterId',
+				width: '15%',
+				align: 'center'
+			}, {
+				text: '值类型',
+				sortable: true,
+				dataIndex: 'valueType',
+				width: '15%',
+				align: 'center',
+				renderer: function (value) {
+					if (value == 'double') {
+						return 'Double';
+					}
+					if (value == 'string') {
+						return 'String';
+					}
+				}
+			}, {
+				text: '是否可写',
+				sortable: true,
+				dataIndex: 'writeAble',
+				width: '10%',
+				align: 'center',
+				renderer: function (value) {
+					if (value == 'y') {
+						return '<span style="color:red;">读写</span>';
+					}
+					if (value == 'n') {
+						return '<span style="color:green;">读写</span>';
+					}
+				}
+			}, {
+				text: '当前值',
+				sortable: true,
+				dataIndex: 'value',
+				width: '10%',
+				align: 'center'
+			}, {
+				text: '更新时间',
+				dataIndex: 'atTime',
+				width: '15%',
+				align: 'center',
+				renderer: function (value) {
+					return new Date(value).Format("yyyy-MM-dd hh:mm:ss");
+				}
+			}]
+		});
+
+		Ext.create('Ext.container.Viewport', {
+			layout: 'border',
+			items: [{
+				region: 'center',
+				layout: 'fit',
+				items: GridPanel
+			}]
+		});
+
+		function onAddClick() {
+			customWin('新增', 'add', 0);
+		}
+		function onDeleteClick() {
+			var sel = GridPanel.getSelection();
+			var size = sel.length;
+			if (size > 0) {
+				Ext.MessageBox.confirm('温馨提示', '确定删除已选的' + size + '条记录?', function (btn) {
+					if (btn == 'yes') {
+						var nodes = '';
+						for (var m = 0; m < size; m++) {
+							nodes += sel[m].data.nodeId + ',';
+						}
+						Ext.Ajax.request({
+							method: 'get',
+							url: ctxPath + '/gateWay/delete.do',
+							params: {
+								nodeId: nodes
+							},
+							success: function (response) {
+								var responseText = Ext.decode(response.responseText);
+								if (responseText.result != 'Y') {
+									Ext.Msg.alert('错误！', responseText.message);
+								} else {
+									Ext.Msg.alert('成功！', responseText.message);
+									store.reload();
+								}
+							}
+						});
+					} else {
+						showToast(Ext.String.format('您取消了本次操作！'));
+					}
+				}, this);
+			} else {
+				failureMsgAlert('编辑之前请至少选择一条记录！');
+			}
+		}
+		function onUpdateClick() {
+			var sel = GridPanel.getSelection();
+			var size = sel.length
+			if (size > 1) {
+				failureMsgAlert('最多选择一条记录进行编辑！');
+			} else if (size < 1) {
+				failureMsgAlert('编辑之前请至少选择一条记录！');
+			} else {
+				customWin('修改', 'update', sel[0].data);
+			}
+		}
+
+		function onReloadClick() {
+			store.reload();
+			showToast(Ext.String.format('刷新成功！'));
+		}
+
+		function onOpcUaClick() {
+			Ext.Ajax.request({
+				method: 'get',
+				url: ctxPath + '/rest/xml/getOpcUa.do',
+				params: {
+				},
+				success: function (response) {
+					var responseText = Ext.decode(response.responseText);
+					if (responseText.result != 'Y') {
+						Ext.Msg.alert('错误！', responseText.message);
+					} else {
+						Ext.Msg.alert('成功！', responseText.message);
+						store.reload();
+					}
+				}
+			});
+		}
+	});
+</script>
