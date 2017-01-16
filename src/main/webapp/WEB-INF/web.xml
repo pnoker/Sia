@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	metadata-complete="false" version="3.0">
 
 	<display-name>Sia Demo Project</display-name>
@@ -29,8 +31,9 @@
 	</filter-mapping>
 
 	<!-- 过滤器，shiro验证及授权 -->
-	<!--<filter> <filter-name>shiroFilter</filter-name> <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class> </filter> <filter-mapping> <filter-name>shiroFilter</filter-name> 
-		<url-pattern>/*</url-pattern> </filter-mapping> -->
+	<!--<filter> <filter-name>shiroFilter</filter-name> <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class> 
+		</filter> <filter-mapping> <filter-name>shiroFilter</filter-name> <url-pattern>/*</url-pattern> 
+		</filter-mapping> -->
 
 	<!-- 实例化Spring容器 -->
 	<!-- 应用启动时,该监听器被执行,它会读取Spring相关配置文件,其默认会到WEB-INF中查找applicationContext.xml -->
@@ -58,21 +61,18 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>Sia</servlet-name>
-		<url-pattern>*.do</url-pattern>
+		<url-pattern>/</url-pattern>
 	</servlet-mapping>
 
-	<!-- <servlet> <description>Socket Server</description> <servlet-name>SocketServer</servlet-name> <servlet-class>com.Sia.service.SocketServer</servlet-class> <load-on-startup>3</load-on-startup> </servlet> -->
+	<!-- <servlet> <description>Socket Server</description> <servlet-name>SocketServer</servlet-name> 
+		<servlet-class>com.Sia.service.SocketServer</servlet-class> <load-on-startup>3</load-on-startup> 
+		</servlet> -->
 
 
 	<!-- Session超时30分钟(零或负数表示会话永不超时) -->
 	<session-config>
 		<session-timeout>30</session-timeout>
 	</session-config>
-
-	<!-- 默认欢迎页 -->
-	<welcome-file-list>
-		<welcome-file>/login.do</welcome-file>
-	</welcome-file-list>
 
 	<error-page>
 		<error-code>405</error-code>

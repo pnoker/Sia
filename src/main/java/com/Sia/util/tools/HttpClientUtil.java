@@ -33,7 +33,7 @@ public class HttpClientUtil {
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		BasePath basePath = new BasePath();
 		// 创建httppost
-		HttpPost httppost = new HttpPost("http://" + ip + ":" + port + url);
+		HttpPost httppost = new HttpPost("http://" + ip + ":" + port + url+".do");
 		// 创建参数队列
 		List<NameValuePair> formparams = new ArrayList<NameValuePair>();
 		formparams.add(new BasicNameValuePair("text", text));

@@ -24,7 +24,7 @@ public class TTT {
 	 */
 	public static void main(String[] args) throws ClientProtocolException, IOException {
 		HttpClient httpclient = new DefaultHttpClient();
-		HttpGet httpgets = new HttpGet("http://localhost:8080/Sia/rest/xml/cnfg.do");
+		HttpGet httpgets = new HttpGet("http://localhost:8080/Sia/rest/xml/cnfg");
 		HttpResponse response = httpclient.execute(httpgets);
 		HttpEntity entity = response.getEntity();
 		if (entity != null) {

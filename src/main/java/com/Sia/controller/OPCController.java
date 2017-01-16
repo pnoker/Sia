@@ -87,6 +87,11 @@ public class OPCController extends BaseController {
 		return createSimpleSuccessJson(message);
 	}
 
+	/**
+	 * @param request
+	 * @param nodeId 这里的nodeId其实是deta_real_id
+	 * @return
+	 */
 	@AuthPassport
 	@ResponseBody
 	@RequestMapping(value = "/cnfg/delete", produces = "text/html;charset=UTF-8")
@@ -94,19 +99,19 @@ public class OPCController extends BaseController {
 		String message = "适配器点位";
 		String[] nodes = nodeId.split(",");
 		for (String node : nodes) {
-			int ID = Integer.parseInt(node);
-			ConfigProtocol configProtocol = configProtocolService.selectByPrimaryKey(ID);
+			int NodeID = Integer.parseInt(node);
+			ConfigProtocol configProtocol = configProtocolService.selectByDataRealId(NodeID);
 			if (configProtocol != null) {
 				logger.info("开始删除适配器点位配置");
-				if (configProtocolService.deleteByPrimaryKey(ID) > 0) {
-					logger.info("配置" + ID + "删除成功");
+				if (configProtocolService.deleteByPrimaryKey(configProtocol.getId()) > 0) {
+					logger.info("配置" + NodeID + "删除成功");
 					message += configProtocol.getName() + "、";
 				} else {
 					logger.info("适配器点位配置删除失败");
 					return createSimpleFailureJson("操作失败");
 				}
 			} else {
-				return createSimpleFailureJson("NodeID:" + ID + "不存在,删除操作失败!");
+				return createSimpleFailureJson("NodeID:" + NodeID + "不存在,删除操作失败!");
 			}
 		}
 		message = message.substring(0, message.lastIndexOf("、")) + "删除成功";

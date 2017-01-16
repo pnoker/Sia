@@ -49,7 +49,7 @@ var customWin = function(text, type, data) {
 				if (FormPanel.form.isValid()) {
 					Ext.Ajax.request({
 						method : 'get',
-						url : ctxPath + '/gateWay/' + type + '.do',
+						url : ctxPath + '/gateWay/' + type+'.do',
 						params : {
 							nodeId : FormPanel.getForm().findField('nodeId').getValue(),
 							name : encodeURI(FormPanel.getForm().findField('name').getValue()),

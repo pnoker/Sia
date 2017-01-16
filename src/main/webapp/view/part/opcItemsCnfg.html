@@ -144,7 +144,7 @@
                     tooltip: '修改',
                     handler: function (grid, rowIndex, colIndex, actionItem, event, record, row) {
                         var data = record.data;
-                        var url = '/index.do#';
+                        var url = '/index#';
                         if (data.icon.indexOf("gateway") > 0) {//定位网关
                             url = '/gateWay/list.do';
                         }
@@ -201,7 +201,7 @@
                         var data = record.data;
                         Ext.MessageBox.confirm('温馨提示', '确定删除已选的记录?', function (btn) {
                             if (btn == 'yes') {
-                                var url = '';
+                                var url = '/index.do#';
                                 if (data.icon.indexOf("gateway") > 0) {//定位网关
                                     url = '/gateWay/delete.do';
                                 }
@@ -249,7 +249,7 @@
             listeners: {
                 select: function (model, record, index, eOpts) {
                     var data = record.data;
-                    var url = '/index.do#';
+                    var url = '/index#';
                     if (data.icon.indexOf("gateway") > 0) {//定位网关
                         url = '/gateWay/list.do';
                     }
@@ -274,7 +274,8 @@
                             var responseText = Ext.decode(response.responseText);
                             var root = responseText.root[0];
                             if (data.icon.indexOf("gateway") > 0) {//定位网关
-                                Ext.getCmp('picture-show').setHtml('<img src="${rc.contextPath}/images/picture-gate.png" style="width: 100%;height: 100%">');
+                                //Ext.getCmp('picture-show').setHtml('<img src="${rc.contextPath}/images/picture-gate.png" style="width: 100%;height: 100%">');
+                            	setCharts('picture-show');
                                 Ext.getCmp('content-show').setSource(root);
                                 Ext.getCmp('chart-show').setHtml('<img src="${rc.contextPath}/images/picture.png" style="width: 100%;height: 100%">');
                             }

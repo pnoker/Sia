@@ -2,7 +2,9 @@ package com.Sia.controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -31,7 +34,6 @@ import com.Sia.pojo.GateWay;
 import com.Sia.pojo.GridDataResult;
 import com.Sia.pojo.Item;
 import com.Sia.pojo.OpcUaNodes;
-import com.Sia.pojo.RemoteIp;
 import com.Sia.pojo.Variable;
 import com.Sia.service.AdapterService;
 import com.Sia.service.ConfigProtocolService;
@@ -109,6 +111,11 @@ public class RestController extends BaseController {
 		return opcUaNodes;
 	}
 
+	/**
+	 * @param request
+	 * @param modelMap
+	 * @return json
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/jsonData", produces = "text/json;charset=UTF-8")
 	public String jsonData(HttpServletRequest request, ModelMap modelMap) {
@@ -148,6 +155,66 @@ public class RestController extends BaseController {
 		// OpcUaNodes
 		OpcUaNodes opcUaNodes = new OpcUaNodes(gateWay);
 		return JSON.toJSONString(opcUaNodes);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/data", produces = "text/json;charset=UTF-8")
+	public String getData(HttpServletRequest request, @RequestParam(value = "gateway", required = false) String gateway, @RequestParam(value = "adapter", required = false) String adapter,
+			@RequestParam(value = "variable", required = false) String variable) {
+		if (gateway == null) {// 没有输入网关信息，返回的是全部网关
+			GatewayExample exampleGate = new GatewayExample();
+			GatewayExample.Criteria criteriaGate = exampleGate.createCriteria();
+			List<Gateway> gateways = gatewayService.selectByExample(exampleGate);
+			Map<String, Object> map = new HashMap<String, Object>();
+			List<String> list = new ArrayList<String>();
+			for (Gateway gateway_1 : gateways) {
+				list.add(gateway_1.getNodeId().toString());
+			}
+			map.put("gateway", list);
+			return JSON.toJSONString(map);
+		} else {
+			if (adapter == null) {// 输入了网关，但是没有输入适配器信息，返回的是该网关下全部的适配器
+				int GateWay = Integer.parseInt(gateway);
+				AdapterExample exampleAdapter = new AdapterExample();
+				AdapterExample.Criteria criteriaAdapter = exampleAdapter.createCriteria();
+				criteriaAdapter.andGatewayIdEqualTo(GateWay);
+				List<com.Sia.model.Adapter> adapters = adapterService.selectByExample(exampleAdapter);
+				Map<String, Object> map = new HashMap<String, Object>();
+				List<String> list = new ArrayList<String>();
+				for (com.Sia.model.Adapter adapter_1 : adapters) {
+					list.add(adapter_1.getNodeId().toString());
+				}
+				map.put("adapter", list);
+				return JSON.toJSONString(map);
+			} else {
+				if (variable == null) {// 输入了网关，输入了适配器，但是没有输入适配器底下的变量，返回该适配器下全部的变量
+					int Adapter = Integer.parseInt(adapter);
+					DataRealExample exampleData = new DataRealExample();
+					DataRealExample.Criteria criteriaData = exampleData.createCriteria();
+					criteriaData.andAdapterIdEqualTo(Adapter);
+					List<DataReal> dataReals = dataRealService.selectByExample(exampleData);
+					Map<String, Object> map = new HashMap<String, Object>();
+					List<String> list = new ArrayList<String>();
+					for (DataReal dataReal : dataReals) {
+						list.add(dataReal.getNodeId().toString());
+					}
+					map.put("variable", list);
+					return JSON.toJSONString(map);
+				} else {
+					int Variable = Integer.parseInt(variable);
+					DataRealExample exampleData = new DataRealExample();
+					DataRealExample.Criteria criteriaData = exampleData.createCriteria();
+					criteriaData.andNodeIdEqualTo(Variable);
+					List<DataReal> dataReals = dataRealService.selectByExample(exampleData);
+					for (DataReal dataReal : dataReals) {
+						dataReal.setProtocolId(null);
+						dataReal.setAdapterId(null);
+						dataReal.setTag(null);
+					}
+					return JSON.toJSONString(dataReals);
+				}
+			}
+		}
 	}
 
 	@ResponseBody
@@ -199,31 +266,6 @@ public class RestController extends BaseController {
 		return opcUaNodes;
 	}
 
-	/*
-	 * @ResponseBody
-	 * 
-	 * @RequestMapping(value = "/xml/cnfg", produces = "text/xml;charset=UTF-8")
-	 * public Config xmlCnfg(HttpServletRequest request, ModelMap
-	 * modelMap, @RequestParam String text) { logger.info("返回点位配置的XML数据");
-	 * String rexp =
-	 * "([1-9]|[1-9]\\d|1\\d{2}|2[0-4]\\d|25[0-5])(\\.(\\d|[1-9]\\d|1\\d{2}|2[0-4]\\d|25[0-5])){3}";
-	 * Pattern pat = Pattern.compile(rexp); Matcher mat =
-	 * pat.matcher(text.split(":")[0]); boolean isIp = mat.find(); Config config
-	 * = new Config(); if (isIp) { rexp = "[0-9]*"; pat = Pattern.compile(rexp);
-	 * mat = pat.matcher(text.split(":")[1]); boolean isPort = mat.find(); if
-	 * (isPort) { ConfigProtocolExample exampleC = new ConfigProtocolExample();
-	 * ConfigProtocolExample.Criteria criteriaC = exampleC.createCriteria();
-	 * List<ConfigProtocol> configProtocols =
-	 * configProtocolService.selectByExample(exampleC); for (ConfigProtocol list
-	 * : configProtocols) { DataReal dataReal =
-	 * dataRealService.selectByPrimaryKey(list.getDataRealId());
-	 * config.getItem().add(new Item(list.getDataRealId(), 1,
-	 * list.getDeviceId(), list.getModAddr(), list.getType(), list.getRw(),
-	 * list.getFre(), dataReal.getName())); } config.setRemoteIp(new
-	 * RemoteIp(text.split(":")[0], text.split(":")[1], "localhost", "6001",
-	 * "client")); } } return config; }
-	 */
-
 	/**
 	 * 下载仪表读取XML配置文件
 	 */
@@ -251,7 +293,7 @@ public class RestController extends BaseController {
 			if (isPort) {
 				HttpClientUtil httpClientUtil = new HttpClientUtil();
 				try {
-					httpClientUtil.doGet("localhost", 8080, "/Sia/rest/xml/opcua.do", "Config", text);// httpclient生成config文件
+					httpClientUtil.doGet("localhost", 8080, "/Sia/rest/xml/opcua", "Config", text);// httpclient生成config文件
 				} catch (ClientProtocolException e) {
 					logger.info(e.getMessage());
 					return createSimpleFailureJson(e.getMessage());
@@ -267,25 +309,4 @@ public class RestController extends BaseController {
 		}
 		return createSimpleSuccessJson("生成成功，文件在:" + basePath.getBasePath() + "Config.xml");
 	}
-
-	/**
-	 * 下载OPC UA 配置及读取XML配置文件
-	 */
-	/*
-	 * @ResponseBody
-	 * 
-	 * @RequestMapping(value = "/xml/getOpcUa", produces =
-	 * "text/xml;charset=UTF-8") // 点击按钮 public String
-	 * getOpcUaXml(HttpServletRequest request, ModelMap modelMap) {
-	 * logger.info("返回OpcUa配置的XML数据"); HttpClientUtil httpClientUtil = new
-	 * HttpClientUtil(); BasePath basePath = new BasePath(); try {
-	 * httpClientUtil.doGet("localhost", 8080, "/Sia/rest/xml/opcua.do",
-	 * "OpcUa", "");// httpclient生成opcua文件 } catch (ClientProtocolException e) {
-	 * logger.info(e.getMessage()); return
-	 * createSimpleFailureJson(e.getMessage()); } catch (IOException e) {
-	 * logger.info(e.getMessage()); return
-	 * createSimpleFailureJson(e.getMessage()); } return
-	 * createSimpleSuccessJson("生成成功，文件在:" + basePath.getBasePath() +
-	 * "OpcUa.xml"); }
-	 */
 }

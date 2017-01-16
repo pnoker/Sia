@@ -87,7 +87,7 @@
 					if (FormPanel.form.isValid()) {
 						Ext.Ajax.request({
 							method: 'get',
-							url: ctxPath + '/adapter/' + type + '.do',
+							url: ctxPath + '/adapter/' + type+'.do',
 							params: {
 								nodeId: FormPanel.getForm().findField('nodeId').getValue(),
 								gatewayId: FormPanel.getForm().findField('gatewayId').getValue(),

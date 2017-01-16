@@ -57,9 +57,9 @@ public class MainController extends BaseController {
 	@Autowired
 	private WeatherService weatherService;
 
-	@RequestMapping(value = "/login", produces = "text/html;charset=UTF-8")
+	@RequestMapping(value = "/", produces = "text/html;charset=UTF-8")
 	public String login(HttpServletRequest request, HttpServletResponse response, ModelMap modelMap) throws Exception {
-		logger.info("登陆页");
+		logger.info("登陆首页");
 		HttpSession session = request.getSession(false);
 		if (session == null) {
 			return "/login";
