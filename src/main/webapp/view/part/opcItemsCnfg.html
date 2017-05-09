@@ -157,7 +157,7 @@
                         if (data.icon.indexOf("config") > 0) {//定位适配器的变量
                             url = '/opcItems/cnfg/list.do';
                         }
-                        /*Ext.Ajax.request({
+                        Ext.Ajax.request({
                             method: 'get',
                             url: ctxPath + url,
                             params: {
@@ -182,7 +182,7 @@
                                 }
 
                             }
-                        });*/
+                        });
 
                     },
                     isDisabled: function (view, rowIndex, colIndex, item, record) {

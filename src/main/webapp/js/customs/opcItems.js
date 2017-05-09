@@ -807,17 +807,18 @@ var gatewayWin = function(text, type, data) {// 网关新增与修改弹窗
 	}
 	Win.show();
 }
+/*
 
-/**
+/!**
  * 自动初始化chart，延迟1s
- */
+ *!/
 var init = setTimeout(function() {
 	setCharts(radar, 'radar');
 }, 1000);
 
-/**
+/!**
  * 玫瑰图
- */
+ *!/
 var radar = {
 	title : {
 		text : '多雷达图',
@@ -950,13 +951,13 @@ var radar = {
 			} ]
 };
 
-/**
+/!**
  * 设置chart
  * 
  * @param option
  * @param id
- */
+ *!/
 function setCharts(id) {
 	var myChart = echarts.init(document.getElementById(id), 'macarons');
 	myChart.setOption(radar);
-}
+}*/
