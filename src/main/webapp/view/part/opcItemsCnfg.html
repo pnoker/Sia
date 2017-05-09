@@ -157,7 +157,7 @@
                         if (data.icon.indexOf("config") > 0) {//定位适配器的变量
                             url = '/opcItems/cnfg/list.do';
                         }
-                        Ext.Ajax.request({
+                        /*Ext.Ajax.request({
                             method: 'get',
                             url: ctxPath + url,
                             params: {
@@ -182,7 +182,7 @@
                                 }
 
                             }
-                        });
+                        });*/
 
                     },
                     isDisabled: function (view, rowIndex, colIndex, item, record) {
@@ -309,11 +309,11 @@
                 items: [{
                     region: 'center',
                     xtype: 'panel',
-                    width: '60%',
+                    width: '100%',
                     height: '100%',
                     layout: 'fit',
                     items: TreePanel
-                }, {
+                }/*, {
                     region: 'east',
                     xtype: 'panel',
                     width: '40%',
@@ -347,7 +347,7 @@
                         height: '40%',
                         html: 'picture + grid '
                     }]
-                }]
+                }*/]
             }]
         });
 
