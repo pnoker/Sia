@@ -1,0 +1,469 @@
+<script type="text/javascript" src="${rc.contextPath}/js/customs/opcItems.js"></script>
+<script type="text/javascript">
+    var store, dataRealStore, adapterStore, gatewayStore;
+
+    Ext.onReady(function () {
+        Ext.tip.QuickTipManager.init();
+
+        dataRealStore = Ext.create('Ext.data.JsonStore', {
+            model: 'model.Adapter',
+            folderSort: true,
+            autoLoad: true,
+            proxy: {
+                type: 'ajax',
+                reader: {
+                    type: 'json',
+                    root: 'root',
+                    totalProperty: 'total'
+                },
+                url: ctxPath + '/opcItems/list.do'
+            },
+            listeners: {
+                load: function (store, records, successful, eOpts) {
+                    for (var i = 0; i < records.length; i++) {
+                        var role = records[i].get('roleid');
+                        records[i].set('name', records[i].get('nodeId') + ' -> ' + records[i].get('name'));
+                    }
+                }
+            }
+        });
+
+        adapterStore = Ext.create('Ext.data.JsonStore', {
+            model: 'model.Adapter',
+            folderSort: true,
+            autoLoad: true,
+            proxy: {
+                type: 'ajax',
+                reader: {
+                    type: 'json',
+                    root: 'root',
+                    totalProperty: 'total'
+                },
+                url: ctxPath + '/adapter/list.do'
+            },
+            listeners: {
+                load: function (store, records, successful, eOpts) {
+                    for (var i = 0; i < records.length; i++) {
+                        var role = records[i].get('roleid');
+                        records[i].set('name', records[i].get('nodeId') + ' -> ' + records[i].get('name'));
+                    }
+                }
+            }
+        });
+
+        gatewayStore = Ext.create('Ext.data.JsonStore', {
+            model: 'model.Gateway',
+            folderSort: true,
+            autoLoad: true,
+            proxy: {
+                type: 'ajax',
+                reader: {
+                    type: 'json',
+                    root: 'root',
+                    totalProperty: 'total'
+                },
+                url: ctxPath + '/gateWay/list.do'
+            },
+            listeners: {
+                load: function (store, records, successful, eOpts) {
+                    for (var i = 0; i < records.length; i++) {
+                        var role = records[i].get('roleid');
+                        records[i].set('name', records[i].get('nodeId') + ' -> ' + records[i].get('name'));
+                    }
+                }
+            }
+        });
+
+        store = Ext.create('Ext.data.TreeStore', {
+            model: 'model.Config',
+            proxy: {
+                type: 'ajax',
+                reader: {
+                    type: 'json'
+                },
+                url: ctxPath + '/opcItems/tree.do'
+            },
+            root: {
+                name: 'OPC-UA',
+                icon: '/Sia/images/icon/opc_server.png',
+                expanded: true
+            }
+        });
+
+        var toolbar = Ext.create('Ext.toolbar.Toolbar', {
+            dock: 'top',
+            items: [${dockedItems}, '->', {
+                xtype: 'button',
+                icon: '/Sia/images/icon/config.png',
+                text: '一键生成配置文件',
+                style: 'border: 1px solid #3892d3;',
+                handler: onConfigClick
+            }]
+        });
+
+        var TreePanel = Ext.create('Ext.tree.Panel', {
+            store: store,
+            columnLines: true,
+            viewConfig: {
+                scrollable: true,
+                loadMask: true,
+                rootVisible: true,
+            },
+            dockedItems: toolbar,
+            columns: [{
+                xtype: 'treecolumn',
+                width: '35%',
+                dataIndex: 'name',
+                text: '<div align="center">网关\\适配器\\变量\\配置</div>'
+            }, {
+                xtype: 'gridcolumn',
+                width: '15%',
+                dataIndex: 'name',
+                text: '名称',
+                align: 'center'
+            }, {
+                xtype: 'gridcolumn',
+                width: '15%',
+                dataIndex: 'nodeId',
+                text: '节点NodeID',
+                align: 'center'
+            }, {
+                xtype: 'gridcolumn',
+                width: '15%',
+                dataIndex: 'parentNodeId',
+                text: '父节点NodeID',
+                align: 'center'
+            }, {
+                xtype: 'actioncolumn',
+                margin: '0 20 0 0',
+                width: '19%',
+                text: '操作',
+                align: 'center',
+                items: [{
+                    icon: '/Sia/images/icon/update.png',
+                    tooltip: '修改',
+                    handler: function (grid, rowIndex, colIndex, actionItem, event, record, row) {
+                        var data = record.data;
+                        var url = '/index#';
+                        if (data.icon.indexOf("gateway") > 0) {//定位网关
+                            url = '/gateWay/list.do';
+                        }
+                        if (data.icon.indexOf("adapter") > 0) {//定位适配器
+                            url = '/adapter/list.do';
+                        }
+                        if (data.icon.indexOf("data") > 0) {//定位适配器的变量
+                            url = '/opcItems/list.do';
+                        }
+                        if (data.icon.indexOf("config") > 0) {//定位适配器的变量
+                            url = '/opcItems/cnfg/list.do';
+                        }
+                        Ext.Ajax.request({
+                            method: 'get',
+                            url: ctxPath + url,
+                            params: {
+                                nodeId: data.nodeId,
+                                start: 0,
+                                limit: 0
+                            },
+                            success: function (response) {
+                                var responseText = Ext.decode(response.responseText);
+                                var root = responseText.root[0];
+                                if (data.icon.indexOf("gateway") > 0) {//定位网关
+                                    gatewayWin('修改', 'update', root);
+                                }
+                                if (data.icon.indexOf("adapter") > 0) {//定位适配器
+                                    adapterWin('修改', 'update', root);
+                                }
+                                if (data.icon.indexOf("data") > 0) {//定位适配器的变量
+                                    dataRealWin('修改', 'update', root);
+                                }
+                                if (data.icon.indexOf("config") > 0) {//定位适配器的变量
+                                    configWin('修改', 'update', root);
+                                }
+
+                            }
+                        });
+
+                    },
+                    isDisabled: function (view, rowIndex, colIndex, item, record) {
+                        var data = record.data;
+                        if (data.nodeId != '') {
+                            return false
+                        }
+                        else {
+                            return true;
+                        }
+                    }
+                }, {
+                    icon: '/Sia/images/icon/delete.png',
+                    tooltip: '删除',
+                    handler: function (grid, rowIndex, colIndex, actionItem, event, record, row) {
+                        var data = record.data;
+                        Ext.MessageBox.confirm('温馨提示', '确定删除已选的记录?', function (btn) {
+                            if (btn == 'yes') {
+                                var url = '/index.do#';
+                                if (data.icon.indexOf("gateway") > 0) {//定位网关
+                                    url = '/gateWay/delete.do';
+                                }
+                                if (data.icon.indexOf("adapter") > 0) {//定位适配器
+                                    url = '/adapter/delete.do';
+                                }
+                                if (data.icon.indexOf("data") > 0) {//定位适配器的变量
+                                    url = '/adapter/cnfg/delete.do';
+                                }
+                                if (data.icon.indexOf("config") > 0) {//定位适配器的变量
+                                    url = '/opcItems/cnfg/delete.do';
+                                }
+                                Ext.Ajax.request({
+                                    method: 'get',
+                                    url: ctxPath + url,
+                                    params: {
+                                        nodeId: data.nodeId
+                                    },
+                                    success: function (response) {
+                                        var responseText = Ext.decode(response.responseText);
+                                        if (responseText.result != 'Y') {
+                                            Ext.Msg.alert('错误！', responseText.message);
+                                        } else {
+                                            Ext.Msg.alert('成功！', responseText.message);
+                                            store.reload();
+                                        }
+                                    }
+                                });
+                            } else {
+                                showToast(Ext.String.format('您取消了本次操作！'));
+                            }
+                        }, this);
+                    },
+                    isDisabled: function (view, rowIndex, colIndex, item, record) {
+                        var data = record.data;
+                        if (data.nodeId != '') {
+                            return false
+                        }
+                        else {
+                            return true;
+                        }
+                    }
+                }]
+            }],
+            listeners: {
+                select: function (model, record, index, eOpts) {
+                    var data = record.data;
+                    var url = '/index#';
+                    if (data.icon.indexOf("gateway") > 0) {//定位网关
+                        url = '/gateWay/list.do';
+                    }
+                    if (data.icon.indexOf("adapter") > 0) {//定位适配器
+                        url = '/adapter/list.do';
+                    }
+                    if (data.icon.indexOf("data") > 0) {//定位适配器的变量
+                        url = '/opcItems/list.do';
+                    }
+                    if (data.icon.indexOf("config") > 0) {//定位适配器的变量
+                        url = '/opcItems/cnfg/list.do';
+                    }
+                    Ext.Ajax.request({
+                        method: 'get',
+                        url: ctxPath + url,
+                        params: {
+                            nodeId: data.nodeId,
+                            start: 0,
+                            limit: 0
+                        },
+                        success: function (response) {
+                            var responseText = Ext.decode(response.responseText);
+                            var root = responseText.root[0];
+                            if (data.icon.indexOf("gateway") > 0) {//定位网关
+                                //Ext.getCmp('picture-show').setHtml('<img src="${rc.contextPath}/images/picture-gate.png" style="width: 100%;height: 100%">');
+                            	setCharts('picture-show');
+                                Ext.getCmp('content-show').setSource(root);
+                                Ext.getCmp('chart-show').setHtml('<img src="${rc.contextPath}/images/picture.png" style="width: 100%;height: 100%">');
+                            }
+                            if (data.icon.indexOf("adapter") > 0) {//定位适配器
+                                Ext.getCmp('picture-show').setHtml('<img src="${rc.contextPath}/images/picture-adapter.png" style="width: 100%;height: 100%">');
+                                Ext.getCmp('content-show').setSource(root);
+                                Ext.getCmp('chart-show').setHtml('<img src="${rc.contextPath}/images/picture.png" style="width: 100%;height: 100%">');
+                            }
+                            if (data.icon.indexOf("data") > 0) {//定位适配器的变量
+                                Ext.getCmp('picture-show').setHtml('<img src="${rc.contextPath}/images/picture.png" style="width: 100%;height: 100%">');
+                                Ext.getCmp('content-show').setSource(root);
+                                Ext.getCmp('chart-show').setHtml('<img src="${rc.contextPath}/images/picture.png" style="width: 100%;height: 100%">');
+                            }
+                            if (data.icon.indexOf("config") > 0) {//定位适配器的变量
+                                Ext.getCmp('picture-show').setHtml('<img src="${rc.contextPath}/images/picture.png" style="width: 100%;height: 100%">');
+                                Ext.getCmp('content-show').setSource(root);
+                                Ext.getCmp('content-show').setHtml('<img src="${rc.contextPath}/images/picture.png" style="width: 100%;height: 100%">');
+                            }
+                        }
+                    });
+                }
+            }
+        });
+
+
+        Ext.create('Ext.container.Viewport', {
+            layout: 'border',
+            items: [{
+                region: 'center',
+                layout: 'border',
+                items: [{
+                    region: 'center',
+                    xtype: 'panel',
+                    width: '60%',
+                    height: '100%',
+                    layout: 'fit',
+                    items: TreePanel
+                }, {
+                    region: 'east',
+                    xtype: 'panel',
+                    width: '40%',
+                    height: '100%',
+                    layout: 'border',
+                    items: [{
+                        region: 'north',
+                        xtype: 'panel',
+                        width: '100%',
+                        height: '60%',
+                        layout: 'border',
+                        items: [{
+                            id: 'picture-show',
+                            region: 'center',
+                            width: '60%',
+                            height: '100%',
+                            html: 'picture'
+                        }, {
+                            id: 'content-show',
+                            region: 'east',
+                            xtype: 'propertygrid',
+                            width: '40%',
+                            height: '100%',
+                            source: {}
+                        }]
+                    }, {
+                        id: 'chart-show',
+                        region: 'south',
+                        xtype: 'panel',
+                        width: '100%',
+                        height: '40%',
+                        html: 'picture + grid '
+                    }]
+                }]
+            }]
+        });
+
+        function onAddClick() {
+            var sel = TreePanel.getSelection();
+            if (sel[0].data.nodeId == '' && sel[0].data.parentNodeId == '') {//选择是根节点，那么点击添加就是新增一个网关
+                gatewayWin('新增', 'add', sel[0].data);
+
+            }
+            if (sel[0].data.nodeId != '' && sel[0].data.parentNodeId == '') {//选择是网关节点，那么点击添加就是新增一个适配器
+                adapterWin('新增', 'add', sel[0].data);
+            }
+            if (sel[0].data.icon.indexOf("adapter") > 0) {//选择是适配器，那么点击添加就是新增一个适配器变量
+                dataRealWin('新增', 'add', sel[0].data);
+            }
+            if (sel[0].data.icon.indexOf("data") > 0) {//选择是适配器配置属性，那么点击添加就是新增一个适配器变量配置
+                configWin('新增', 'add', sel[0].data);
+            }
+        }
+        function onDeleteClick() {
+            var sel = TreePanel.getSelection();
+            var size = sel.length;
+            if (size > 0) {
+                if (sel[0].data.deviceId != '') {
+                    Ext.MessageBox.confirm('温馨提示', '确定删除已选的' + size + '条记录?', function (btn) {
+                        if (btn == 'yes') {
+                            var nodes = '';
+                            for (var m = 0; m < size; m++) {
+                                nodes += sel[m].data.nodeId + ',';
+                            }
+                            Ext.Ajax.request({
+                                method: 'get',
+                                url: ctxPath + '/opcItems/cnfg/delete.do',
+                                params: {
+                                    Id: nodes
+                                },
+                                success: function (response) {
+                                    var responseText = Ext.decode(response.responseText);
+                                    if (responseText.result != 'Y') {
+                                        Ext.Msg.alert('错误！', responseText.message);
+                                    } else {
+                                        Ext.Msg.alert('成功！', responseText.message);
+                                        store.reload();
+                                    }
+                                }
+                            });
+                        } else {
+                            showToast(Ext.String.format('您取消了本次操作！'));
+                        }
+                    }, this);
+                } else {
+                    failureMsgAlert('这不是一个有效的节点，请重新选择！');
+                }
+            } else {
+                failureMsgAlert('删除之前请至少选择一条记录！');
+            }
+        }
+        function onUpdateClick() {
+            var sel = TreePanel.getSelection();
+            if (sel[0].data.nodeId == '' && sel[0].data.parentNodeId == '') {
+                gatewayWin('修改', 'update', sel[0].data);
+
+            }
+            if (sel[0].data.nodeId != '' && sel[0].data.parentNodeId == '') {
+                adapterWin('修改', 'update', sel[0].data);
+            }
+            if (sel[0].data.nodeId != '' && sel[0].data.parentNodeId != '' && sel[0].data.leaf != true) {
+                dataRealWin('修改', 'update', sel[0].data);
+            }
+        }
+
+        function onReloadClick() {
+            store.reload();
+            showToast(Ext.String.format('刷新成功！'));
+        }
+
+        function onConfigClick() {
+            Ext.Msg.prompt('温馨提示', '请输入远程IP及端口->例.192.168.1.10:6000', function (btn, text) {
+                if (btn == 'ok') {
+                    Ext.Ajax.request({
+                        method: 'get',
+                        url: ctxPath + '/rest/xml/getCnfg.do',
+                        params: {
+                            text: encodeURI(text)
+                        },
+                        success: function (response) {
+                            var responseText = Ext.decode(response.responseText);
+                            if (responseText.result != 'Y') {
+                                Ext.Msg.alert('错误！', responseText.message);
+                            } else {
+                                Ext.MessageBox.confirm('成功！', responseText.message + '</br> 是否重新启动OPC UA 服务！', function (btn) {
+                                    if (btn == 'yes') {
+                                        Ext.Ajax.request({
+                                            method: 'get',
+                                            url: ctxPath + '/opcItems/cnfg/restart.do',
+                                            params: {
+                                                id: 1
+                                            },
+                                            success: function (response) {
+                                                var responseText = Ext.decode(response.responseText);
+                                                if (responseText.result != 'Y') {
+                                                    Ext.Msg.alert('错误！', responseText.message);
+                                                } else {
+                                                    showProgress('OPC UA Server', '请稍等，服务启动中……', 500, 'OPC UA Server 启动成功！');
+                                                    store.reload();
+                                                }
+                                            }
+                                        });
+                                    }
+                                });
+                                store.reload();
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    });
+</script>

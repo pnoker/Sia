@@ -1,0 +1,390 @@
+<script type="text/javascript">
+    var store;
+    var writeAbleStore = Ext.create('Ext.data.Store', {
+        fields: ['text', 'value'],
+        data: [
+            { "text": "读写", "value": "y" },
+            { "text": "只读", "value": "n" }
+        ]
+    });
+    var valueTypeStore = Ext.create('Ext.data.Store', {
+        fields: ['text', 'value'],
+        data: [
+            { "text": "Double", "value": "double" },
+            { "text": "String", "value": "string" }
+        ]
+    });
+    var tagStore = Ext.create('Ext.data.Store', {
+        fields: ['text', 'value'],
+        data: [
+            { "text": "0", "value": "0" },
+            { "text": "1", "value": "1" },
+            { "text": "2", "value": "2" },
+            { "text": "3", "value": "3" },
+            { "text": "4", "value": "4" },
+            { "text": "5", "value": "5" },
+            { "text": "6", "value": "6" },
+            { "text": "7", "value": "7" },
+            { "text": "8", "value": "8" },
+            { "text": "9", "value": "9" }
+        ]
+    });
+    var customWin = function (text, type, data) {
+        var FormPanel = Ext.create('Ext.form.FormPanel', {
+            frame: true,
+            width: 400,
+            bodyPadding: 10,
+            layout: 'form',
+            items: [{
+                xtype: 'textfield',
+                name: 'nodeId',
+                fieldLabel: '节点NodeID',
+                regex: /^\d{5,6}$/,
+                regexText: '请输入数字，长度为5~6位',
+                allowBlank: false,
+                blankText: '节点NodeID不能为空！',
+                value: ''
+            }, {
+                xtype: 'combobox',
+                store: adapterStore,
+                name: 'adapterId',
+                fieldLabel: '适配器NodeID',
+                allowBlank: false,
+                editable: false,
+                blankText: '点位必须关联一个适配器节点NodeID！',
+                displayField: 'name',
+                valueField: 'nodeId'
+            }, {
+                xtype: 'textfield',
+                name: 'name',
+                fieldLabel: '点位名称',
+                maxLength: 8,
+                allowBlank: false,
+                blankText: '点位名称不能为空！',
+                value: ''
+            }, {
+                xtype: 'combobox',
+                name: 'valueType',
+                store: valueTypeStore,
+                fieldLabel: '值类型',
+                allowBlank: false,
+                editable: false,
+                blankText: '值类型不能为空！',
+                value: '',
+                displayField: 'text',
+                valueField: 'value'
+            }, {
+                xtype: 'combobox',
+                name: 'writeAble',
+                store: writeAbleStore,
+                fieldLabel: '是否可写',
+                allowBlank: false,
+                editable: false,
+                blankText: '可写操作不能为空！',
+                value: '',
+                displayField: 'text',
+                valueField: 'value'
+            }, {
+                xtype: 'textfield',
+                name: 'value',
+                store: writeAbleStore,
+                fieldLabel: '变量值',
+                allowBlank: false,
+                blankText: '变量值不能为空！',
+                value: '0',
+                displayField: 'text',
+                valueField: 'value'
+            }, {
+                xtype: 'combobox',
+                name: 'tag',
+                store: tagStore,
+                fieldLabel: '协议编号',
+                allowBlank: false,
+                editable: false,
+                blankText: '协议编号不能为空！',
+                value: '',
+                displayField: 'text',
+                valueField: 'value'
+            }],
+            buttons: [{
+                text: text,
+                type: 'submit',
+                handler: function () {
+                    if (FormPanel.form.isValid()) {
+                        Ext.Ajax.request({
+                            method: 'get',
+                            url: ctxPath + '/adapter/cnfg/' + type+'.do',
+                            params: {
+                                nodeId: FormPanel.getForm().findField('nodeId').getValue(),
+                                adapterId: FormPanel.getForm().findField('adapterId').getValue(),
+                                name: encodeURI(FormPanel.getForm().findField('name').getValue()),
+                                valueType: FormPanel.getForm().findField('valueType').getValue(),
+                                writeAble: FormPanel.getForm().findField('writeAble').getValue(),
+                                value: encodeURI(FormPanel.getForm().findField('value').getValue()),
+                                tag: FormPanel.getForm().findField('tag').getValue()
+                            },
+                            success: function (response) {
+                                var responseText = Ext.decode(response.responseText);
+                                if (responseText.result != 'Y') {
+                                    Ext.Msg.alert('错误！', responseText.message);
+                                } else {
+                                    Ext.Msg.alert('成功！', responseText.message);
+                                    FormPanel.reset();
+                                    Win.close();
+                                    store.loadPage(1);
+                                }
+                            }
+                        });
+                    }
+                }
+            }, {
+                text: '重置',
+                handler: function () {
+                    if (type != 'update') {
+                        FormPanel.reset();
+                    } else {
+                        FormPanel.getForm().findField('nodeId').setEditable(false);
+                        FormPanel.getForm().findField('adapterId').setEditable(false);
+                        FormPanel.getForm().findField('nodeId').setValue(data.nodeId);
+                        FormPanel.getForm().findField('adapterId').setValue(data.adapterId);
+                        FormPanel.getForm().findField('name').setValue(data.name);
+                        FormPanel.getForm().findField('valueType').setValue(data.valueType);
+                        FormPanel.getForm().findField('writeAble').setValue(data.writeAble);
+                        FormPanel.getForm().findField('value').setValue(data.value);
+                        FormPanel.getForm().findField('tag').setValue(data.tag);
+                    }
+
+                }
+            }, {
+                text: '取消',
+                handler: function () {
+                    FormPanel.reset();
+                    Win.close();
+                }
+            }]
+        });
+
+        var Win = new Ext.Window({
+            layout: 'fit',
+            width: 500,
+            height: 290,
+            constrain: true,
+            resizable: false,
+            closable: false,
+            modal: true,
+            plain: true,
+            items: FormPanel,
+            title: text + '适配器点位',
+            listeners: {
+                beforeshow: function (win, opts) {
+                }
+            }
+        });
+
+        if (type != 'add') {
+            FormPanel.getForm().findField('nodeId').setEditable(false);
+            FormPanel.getForm().findField('adapterId').setEditable(false);
+            FormPanel.getForm().findField('nodeId').setValue(data.nodeId);
+            FormPanel.getForm().findField('adapterId').setValue(data.adapterId);
+            FormPanel.getForm().findField('name').setValue(data.name);
+            FormPanel.getForm().findField('valueType').setValue(data.valueType);
+            FormPanel.getForm().findField('writeAble').setValue(data.writeAble);
+            FormPanel.getForm().findField('value').setValue(data.value);
+            FormPanel.getForm().findField('tag').setValue(data.tag);
+        }
+        Win.show();
+    }
+    Ext.onReady(function () {
+
+        adapterStore = Ext.create('Ext.data.JsonStore', {
+            model: 'model.Adapter',
+            folderSort: true,
+            proxy: {
+                type: 'ajax',
+                reader: {
+                    type: 'json',
+                    root: 'root',
+                    totalProperty: 'total'
+                },
+                url: ctxPath + '/adapter/list.do'
+            },
+            listeners: {
+                load: function (store, records, successful, eOpts) {
+                    for (var i = 0; i < records.length; i++) {
+                        var role = records[i].get('roleid');
+                        records[i].set('name', records[i].get('nodeId') + ' -> ' + records[i].get('name'));
+                    }
+                }
+            }
+        });
+
+        store = Ext.create('Ext.data.TreeStore', {
+            model: 'model.DataReal',
+            proxy: {
+                type: 'ajax',
+                reader: {
+                    type: 'json'
+                },
+                url: ctxPath + '/adapter/tree.do'
+            },
+            root: {
+                name: '适配器',
+                expanded: true
+            }
+        });
+
+        var toolbar = Ext.create('Ext.toolbar.Toolbar', {
+            dock: 'top',
+            items: [${dockedItems}, '->', {
+                xtype: 'container',
+                layout: 'hbox',
+                defaultType: 'textfield',
+                items: [${searchItems}]
+            }, '-', {
+                    xtype: 'button',
+                    text: '查找',
+                    icon: '${rc.contextPath}/images/icon/zoom.png'
+                }]
+        });
+
+        var TreePanel = Ext.create('Ext.tree.Panel', {
+            store: store,
+            columnLines: true,
+            viewConfig: {
+                scrollable: true,
+                loadMask: true,
+                rootVisible: true,
+            },
+            dockedItems: toolbar,
+            columns: [{
+                xtype: 'treecolumn',
+                width: '20%',
+                dataIndex: 'name',
+                text: '<div align="center">适配器\\变量名称</div>'
+            }, {
+                xtype: 'gridcolumn',
+                width: '15%',
+                dataIndex: 'nodeId',
+                text: '节点NodeID',
+                align: 'center'
+            }, {
+                xtype: 'gridcolumn',
+                width: '15%',
+                dataIndex: 'adapterId',
+                text: '适配器节点NodeID',
+                align: 'center'
+            }, {
+                xtype: 'gridcolumn',
+                width: '15%',
+                dataIndex: 'valueType',
+                text: '参数值类型',
+                align: 'center',
+                renderer: function (value) {
+                    if (value == 'double') {
+                        return 'Double';
+                    }
+                    if (value == 'string') {
+                        return 'String';
+                    }
+                }
+            }, {
+                xtype: 'gridcolumn',
+                width: '10%',
+                dataIndex: 'writeAble',
+                text: '是否可写',
+                align: 'center',
+                renderer: function (value) {
+                    if (value == 'y') {
+                        return '<span style="color:red;">读写</span>';
+                    }
+                    if (value == 'n') {
+                        return '<span style="color:green;">读写</span>';
+                    }
+                }
+            }, {
+                xtype: 'gridcolumn',
+                width: '10%',
+                dataIndex: 'tag',
+                text: '协议编号',
+                align: 'center'
+            }, {
+                xtype: 'gridcolumn',
+                width: '15%',
+                dataIndex: 'value',
+                text: '当前值实时值',
+                align: 'center'
+            }]
+        });
+
+        Ext.create('Ext.container.Viewport', {
+            layout: 'border',
+            items: [{
+                region: 'center',
+                layout: 'fit',
+                items: TreePanel
+            }]
+        });
+
+        function onAddClick() {
+            customWin('新增', 'add', 0);
+        }
+        function onDeleteClick() {
+            var sel = TreePanel.getSelection();
+            var size = sel.length;
+            if (size > 0) {
+                if (sel[0].data.adapterId != '') {
+                    Ext.MessageBox.confirm('温馨提示', '确定删除已选的' + size + '条记录?', function (btn) {
+                        if (btn == 'yes') {
+                            var nodes = '';
+                            for (var m = 0; m < size; m++) {
+                                nodes += sel[m].data.nodeId + ',';
+                            }
+                            Ext.Ajax.request({
+                                method: 'get',
+                                url: ctxPath + '/adapter/cnfg/delete.do',
+                                params: {
+                                    nodeId: nodes
+                                },
+                                success: function (response) {
+                                    var responseText = Ext.decode(response.responseText);
+                                    if (responseText.result != 'Y') {
+                                        Ext.Msg.alert('错误！', responseText.message);
+                                    } else {
+                                        Ext.Msg.alert('成功！', responseText.message);
+                                        store.reload();
+                                    }
+                                }
+                            });
+                        } else {
+                            showToast(Ext.String.format('您取消了本次操作！'));
+                        }
+                    }, this);
+                } else {
+                    failureMsgAlert('这不是一个有效的节点，请重新选择！');
+                }
+            } else {
+                failureMsgAlert('删除之前请至少选择一条记录！');
+            }
+        }
+        function onUpdateClick() {
+            var sel = TreePanel.getSelection();
+            var size = sel.length
+            if (size > 1) {
+                failureMsgAlert('最多选择一条记录进行编辑！');
+            } else if (size < 1) {
+                failureMsgAlert('编辑之前请至少选择一条记录！');
+            } else {
+                if (sel[0].data.adapterId != '') {
+                    customWin('修改', 'update', sel[0].data);
+                } else {
+                    failureMsgAlert('抱歉，该页面不能编辑适配器！');
+                }
+            }
+        }
+
+        function onReloadClick() {
+            store.reload();
+            showToast(Ext.String.format('刷新成功！'));
+        }
+    });
+</script>
