@@ -20,6 +20,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * @author Pnoker
@@ -29,11 +31,13 @@ import org.apache.http.message.BasicNameValuePair;
  */
 
 public class HttpClientUtil {
+	static final Logger logger = LogManager.getLogger(HttpClientUtil.class);// 日志
+
 	public void doGet(String ip, int port, String url, String name, String text) throws ClientProtocolException, IOException {
 		CloseableHttpClient httpclient = HttpClients.createDefault();
 		BasePath basePath = new BasePath();
 		// 创建httppost
-		HttpPost httppost = new HttpPost("http://" + ip + ":" + port + url+".do");
+		HttpPost httppost = new HttpPost("http://" + ip + ":" + port + url + ".do");
 		// 创建参数队列
 		List<NameValuePair> formparams = new ArrayList<NameValuePair>();
 		formparams.add(new BasicNameValuePair("text", text));
@@ -41,49 +45,39 @@ public class HttpClientUtil {
 		try {
 			uefEntity = new UrlEncodedFormEntity(formparams, "UTF-8");
 			httppost.setEntity(uefEntity);
-			System.out.println("executing request " + httppost.getURI());
+			logger.info("正在执行请求：" + httppost.getURI());
 			CloseableHttpResponse response = httpclient.execute(httppost);
-			try {
-				HttpEntity entity = response.getEntity();
-				if (entity != null) {
-					InputStream instreams = entity.getContent();
-					String str = convertStreamToString(instreams);
-					System.out.println(str);
-					File file = new File(basePath.getBasePath(), name + ".xml");
-					try {
-						file.createNewFile();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					byte bt[] = new byte[1024];
-					bt = str.getBytes();
-					try {
-						FileOutputStream in = new FileOutputStream(file);
-						try {
-							in.write(bt, 0, bt.length);
-							in.close();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					} catch (FileNotFoundException e) {
-						e.printStackTrace();
-					}
+			HttpEntity entity = response.getEntity();
+			if (entity != null) {
+				InputStream inputStream = entity.getContent();
+				String string = convertStreamToString(inputStream);
+				logger.info("content : \n" + string);
+				File file = new File(basePath.getBasePath(), name + ".xml");
+				file.createNewFile();
+				byte temp[] = new byte[1024];
+				temp = string.getBytes("UTF-8");
+				try {
+					FileOutputStream fileOutputStream = new FileOutputStream(file);
+					fileOutputStream.write(temp, 0, temp.length);
+					fileOutputStream.close();
+				} catch (FileNotFoundException e) {
+					logger.error(e.getMessage());
+				} catch (IOException e) {
+					logger.error(e.getMessage());
 				}
-			} finally {
-				response.close();
 			}
+			response.close();
 		} catch (ClientProtocolException e) {
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e1) {
-			e1.printStackTrace();
+			logger.error(e.getMessage());
+		} catch (UnsupportedEncodingException e) {
+			logger.error(e.getMessage());
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} finally {
-			// 关闭连接,释放资源
 			try {
 				httpclient.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
 	}

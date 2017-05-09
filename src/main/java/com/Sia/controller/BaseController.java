@@ -27,6 +27,12 @@ public class BaseController {
 		return getRequest().getSession(true);
 	}
 
+	/**
+	 * 创建一个成功的json字符串
+	 * 
+	 * @param message
+	 * @return json
+	 */
 	public String createSimpleSuccessJson(String message) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("result", "Y");
@@ -34,6 +40,12 @@ public class BaseController {
 		return JSON.toJSONString(map).toString();
 	}
 
+	/**
+	 * 创建一个失败的json字符串
+	 * 
+	 * @param message
+	 * @return json
+	 */
 	public String createSimpleFailureJson(String message) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("result", "N");
@@ -41,6 +53,14 @@ public class BaseController {
 		return JSON.toJSONString(map).toString();
 	}
 
+	/**
+	 * 创建一个带code的json
+	 * 
+	 * @param resultCode
+	 * @param msg
+	 * @param obj
+	 * @return json
+	 */
 	public String createResultJson(String resultCode, String msg, Object obj) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("result_code", resultCode);
@@ -51,6 +71,12 @@ public class BaseController {
 		return JSON.toJSONString(map);
 	}
 
+	/**
+	 * 用于解码，与encoderURL配套使用
+	 * 
+	 * @param value
+	 * @return string
+	 */
 	public String decoderURL(String value) {
 		try {
 			value = URLDecoder.decode(value, "UTF-8");
