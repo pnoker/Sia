@@ -1,4 +1,5 @@
-/target/
 /.idea/
+/target/
 Sia.iml
-
+.MyBatisGenerator.bat
+generatorConfig.xml
