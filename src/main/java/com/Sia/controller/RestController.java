@@ -16,7 +16,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -159,8 +158,7 @@ public class RestController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping(value = "/data", produces = "text/json;charset=UTF-8")
-	public String getData(HttpServletRequest request, @RequestParam(value = "gateway", required = false) String gateway, @RequestParam(value = "adapter", required = false) String adapter,
-			@RequestParam(value = "variable", required = false) String variable) {
+	public String getData(HttpServletRequest request, @RequestParam(value = "gateway", required = false) String gateway, @RequestParam(value = "adapter", required = false) String adapter, @RequestParam(value = "variable", required = false) String variable) {
 		if (gateway == null) {// 没有输入网关信息，返回的是全部网关
 			GatewayExample exampleGate = new GatewayExample();
 			GatewayExample.Criteria criteriaGate = exampleGate.createCriteria();
@@ -252,14 +250,13 @@ public class RestController extends BaseController {
 					List<ConfigProtocol> configProtocols = configProtocolService.selectByExample(exampleC);
 					Item item = null;
 					for (ConfigProtocol list : configProtocols) {
-						item = new Item(list.getDataRealId(), 1, list.getDeviceId(), list.getModAddr(), list.getType(), list.getRw(), list.getFre(), listD.getValue());
+						item = new Item(list.getDataRealId(), 1, list.getDeviceId(), list.getModAddr(), list.getType(), list.getRw(), list.getFre());
 					}
-					variables.add(new Variable(listD.getNodeId().toString(), listD.getName(), listD.getValueType(), listD.getWriteAble(), listD.getAdapterId().toString(), item));
+					variables.add(new Variable(listD.getNodeId().toString(), listD.getName(), listD.getValueType(), listD.getWriteAble(), listD.getAdapterId().toString(), listD.getValue(), item));
 				}
-				adapters.add(
-						new Adapter(listA.getNodeId().toString(), listA.getName(), listA.getGatewayId().toString(), text.split(":")[0], text.split(":")[1], "localhost", "6001", "client", variables));
+				adapters.add(new Adapter(listA.getNodeId().toString(), listA.getName(), listA.getGatewayId().toString(), variables));
 			}
-			gateWay.add(new GateWay(listG.getNodeId().toString(), listG.getName(), adapters));
+			gateWay.add(new GateWay(listG.getNodeId().toString(), listG.getName(), text.split(":")[0], text.split(":")[1], "localhost", "6001", "client", adapters));
 		}
 		// OpcUaNodes
 		OpcUaNodes opcUaNodes = new OpcUaNodes(gateWay);

@@ -14,10 +14,15 @@ import javax.xml.bind.annotation.XmlType;
  * @description
  */
 @XmlRootElement(name = "GateWay")
-@XmlType(propOrder = { "nodeID", "name", "adapter" })
+@XmlType(propOrder = { "nodeID", "name", "desIp", "desPort", "myIp", "myPort", "pro", "adapter" })
 public class GateWay {
 	private String nodeID;
 	private String name;
+	private String desIp;
+	private String desPort;
+	private String myIp;
+	private String myPort;
+	private String pro;
 	private List<Adapter> adapter;
 
 	public GateWay() {
@@ -27,6 +32,17 @@ public class GateWay {
 	public GateWay(String nodeID, String name, List<Adapter> adapter) {
 		this.nodeID = nodeID;
 		this.name = name;
+		this.adapter = adapter;
+	}
+
+	public GateWay(String nodeID, String name, String desIp, String desPort, String myIp, String myPort, String pro, List<Adapter> adapter) {
+		this.nodeID = nodeID;
+		this.name = name;
+		this.desIp = desIp;
+		this.desPort = desPort;
+		this.myIp = myIp;
+		this.myPort = myPort;
+		this.pro = pro;
 		this.adapter = adapter;
 	}
 
@@ -46,6 +62,51 @@ public class GateWay {
 	@XmlAttribute(name = "name")
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getDesIp() {
+		return desIp;
+	}
+
+	@XmlAttribute(name = "DesIP")
+	public void setDesIp(String desIp) {
+		this.desIp = desIp;
+	}
+
+	public String getDesPort() {
+		return desPort;
+	}
+
+	@XmlAttribute(name = "DesPort")
+	public void setDesPort(String desPort) {
+		this.desPort = desPort;
+	}
+
+	public String getMyIp() {
+		return myIp;
+	}
+
+	@XmlAttribute(name = "MyIP")
+	public void setMyIp(String myIp) {
+		this.myIp = myIp;
+	}
+
+	public String getMyPort() {
+		return myPort;
+	}
+
+	@XmlAttribute(name = "MyPort")
+	public void setMyPort(String myPort) {
+		this.myPort = myPort;
+	}
+
+	public String getPro() {
+		return pro;
+	}
+
+	@XmlAttribute(name = "Pro")
+	public void setPro(String pro) {
+		this.pro = pro;
 	}
 
 	public List<Adapter> getAdapter() {

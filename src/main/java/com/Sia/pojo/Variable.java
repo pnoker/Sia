@@ -13,25 +13,27 @@ import javax.xml.bind.annotation.XmlValue;
  * @description
  */
 @XmlRootElement(name = "Variable")
-@XmlType(propOrder = { "nodeID", "parentNodeID", "name", "type", "writable", "item" })
+@XmlType(propOrder = { "nodeID", "parentNodeID", "name", "type", "writable", "value", "item" })
 public class Variable {
 	private String nodeID;
 	private String name;
 	private String type;
 	private String writable;
 	private String parentNodeID;
+	private String value;
 	private Item item;
 
 	public Variable() {
 		super();
 	}
 
-	public Variable(String nodeID, String name, String type, String writable, String parentNodeID, Item item) {
+	public Variable(String nodeID, String name, String type, String writable, String parentNodeID, String value, Item item) {
 		this.nodeID = nodeID;
 		this.name = name;
 		this.type = type;
 		this.writable = writable;
 		this.parentNodeID = parentNodeID;
+		this.value = value;
 		this.item = item;
 	}
 
@@ -78,6 +80,15 @@ public class Variable {
 	@XmlAttribute(name = "ParentNodeID")
 	public void setParentNodeID(String parentNodeID) {
 		this.parentNodeID = parentNodeID;
+	}
+
+	public String getValue() {
+		return value;
+	}
+
+	@XmlAttribute(name = "value")
+	public void setValue(String value) {
+		this.value = value;
 	}
 
 	public Item getItem() {

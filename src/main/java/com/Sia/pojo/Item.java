@@ -27,7 +27,7 @@ public class Item {
 		super();
 	}
 
-	public Item(int nodeId, int protocol, int deviceId, int modAddr, int type, int rw, int fre, String value) {
+	public Item(int nodeId, int protocol, int deviceId, int modAddr, int type, int rw, int fre) {
 		this.nodeId = nodeId;
 		this.protocol = protocol;
 		this.deviceId = deviceId;
@@ -35,7 +35,6 @@ public class Item {
 		this.type = type;
 		this.rw = rw;
 		this.fre = fre;
-		this.value = value;
 	}
 
 	public int getNodeId() {
@@ -101,12 +100,4 @@ public class Item {
 		this.fre = fre;
 	}
 
-	public String getValue() {
-		return value;
-	}
-
-	@XmlValue
-	public void setValue(String value) {
-		this.value = value;
-	}
 }

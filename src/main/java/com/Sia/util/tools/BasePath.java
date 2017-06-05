@@ -29,7 +29,7 @@ public class BasePath {
 		if (osName.toLowerCase().startsWith("win")) {
 			this.basePath = "E:/FileOperation/opcConfig/";
 		} else {
-			this.basePath = "/home/FileOperation/opcConfig/";
+			this.basePath = "/home/wangfd/FileOperation/opcConfig/";
 		}
 
 		if (!(new File(this.basePath).isDirectory())) {
