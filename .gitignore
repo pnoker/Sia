@@ -1,8 +1,8 @@
-/.idea/
+.idea
 /target/
 Sia.iml
 .MyBatisGenerator.bat
 generatorConfig.xml
-.settings
 .classpath
 .project
+.settings
