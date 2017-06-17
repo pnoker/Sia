@@ -245,7 +245,7 @@
                         }
                     }
                 }]
-            }],
+            }]/*,
             listeners: {
                 select: function (model, record, index, eOpts) {
                     var data = record.data;
@@ -297,7 +297,7 @@
                         }
                     });
                 }
-            }
+            }*/
         });
 
 
@@ -367,6 +367,7 @@
                 configWin('新增', 'add', sel[0].data);
             }
         }
+
         function onDeleteClick() {
             var sel = TreePanel.getSelection();
             var size = sel.length;
@@ -405,6 +406,7 @@
                 failureMsgAlert('删除之前请至少选择一条记录！');
             }
         }
+
         function onUpdateClick() {
             var sel = TreePanel.getSelection();
             if (sel[0].data.nodeId == '' && sel[0].data.parentNodeId == '') {
