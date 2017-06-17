@@ -1,94 +1,100 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns="http://java.sun.com/xml/ns/javaee"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
-	metadata-complete="false" version="3.0">
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         metadata-complete="false" version="3.0">
 
-	<display-name>Sia Demo Project</display-name>
+    <display-name>Sia Demo Project</display-name>
 
-	<!-- 加载Spring配置文件 -->
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath:/applicationContext-*.xml,classpath:spring-quartz.xml</param-value>
-	</context-param>
+    <!-- 加载Spring配置文件 -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:/applicationContext-*.xml,classpath:spring-quartz.xml</param-value>
+    </context-param>
 
-	<!-- 过滤器，强制进行编码为UTF-8格式 -->
-	<filter>
-		<filter-name>encodingFilter</filter-name>
-		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
-		<init-param>
-			<param-name>encoding</param-name>
-			<param-value>utf-8</param-value>
-		</init-param>
-		<init-param>
-			<param-name>forceEncoding</param-name>
-			<param-value>true</param-value>
-		</init-param>
-	</filter>
-	<filter-mapping>
-		<filter-name>encodingFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
+    <!-- 过滤器，强制进行编码为UTF-8格式 -->
+    <filter>
+        <filter-name>encodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>utf-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>encodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
-	<!-- 过滤器，shiro验证及授权 -->
-	<!--<filter> <filter-name>shiroFilter</filter-name> <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class> 
-		</filter> <filter-mapping> <filter-name>shiroFilter</filter-name> <url-pattern>/*</url-pattern> 
-		</filter-mapping> -->
+    <!-- 过滤器，shiro验证及授权 -->
+    <!--<filter> <filter-name>shiroFilter</filter-name> <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        </filter> <filter-mapping> <filter-name>shiroFilter</filter-name> <url-pattern>/*</url-pattern>
+        </filter-mapping> -->
 
-	<!-- 实例化Spring容器 -->
-	<!-- 应用启动时,该监听器被执行,它会读取Spring相关配置文件,其默认会到WEB-INF中查找applicationContext.xml -->
-	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>
+    <!-- 实例化Spring容器 -->
+    <!-- 应用启动时,该监听器被执行,它会读取Spring相关配置文件,其默认会到WEB-INF中查找applicationContext.xml -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
 
-	<!-- 防止发生java.beans.Introspector内存泄露,应将它配置在ContextLoaderListener的前面 -->
-	<listener>
-		<listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
-	</listener>
+    <!-- 防止发生java.beans.Introspector内存泄露,应将它配置在ContextLoaderListener的前面 -->
+    <listener>
+        <listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+    </listener>
 
-	<!-- SpringMVC核心分发器 -->
-	<servlet>
-		<description>Spring MVC Servlet</description>
-		<servlet-name>Sia</servlet-name>
-		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-		<init-param>
-			<param-name>contextConfigLocation</param-name>
-			<param-value>
-				classpath:spring-mvc.xml
-			</param-value>
-		</init-param>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>Sia</servlet-name>
-		<url-pattern>/</url-pattern>
-	</servlet-mapping>
+    <!-- SpringMVC核心分发器 -->
+    <servlet>
+        <description>Spring MVC Servlet</description>
+        <servlet-name>Sia</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>
+                classpath:spring-mvc.xml
+            </param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Sia</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
 
-	<!-- <servlet> <description>Socket Server</description> <servlet-name>SocketServer</servlet-name> 
-		<servlet-class>com.Sia.service.SocketServer</servlet-class> <load-on-startup>3</load-on-startup> 
-		</servlet> -->
+    <servlet>
+        <description>Socket Server</description>
+        <servlet-name>SocketServer</servlet-name>
+        <servlet-class>com.Sia.service.SocketServer</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>SocketServer</servlet-name>
+        <url-pattern>/start.do</url-pattern>
+    </servlet-mapping>
 
 
-	<!-- Session超时30分钟(零或负数表示会话永不超时) -->
-	<session-config>
-		<session-timeout>30</session-timeout>
-	</session-config>
+    <!-- Session超时30分钟(零或负数表示会话永不超时) -->
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
 
-	<error-page>
-		<error-code>405</error-code>
-		<location>/WEB-INF/405.html</location>
-	</error-page>
-	<error-page>
-		<error-code>404</error-code>
-		<location>/WEB-INF/404.jsp</location>
-	</error-page>
-	<error-page>
-		<error-code>500</error-code>
-		<location>/WEB-INF/500.jsp</location>
-	</error-page>
-	<error-page>
-		<exception-type>java.lang.Throwable</exception-type>
-		<location>/WEB-INF/500.jsp</location>
-	</error-page>
+    <error-page>
+        <error-code>405</error-code>
+        <location>/WEB-INF/405.html</location>
+    </error-page>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/WEB-INF/404.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/WEB-INF/500.jsp</location>
+    </error-page>
+    <error-page>
+        <exception-type>java.lang.Throwable</exception-type>
+        <location>/WEB-INF/500.jsp</location>
+    </error-page>
 
 </web-app>
