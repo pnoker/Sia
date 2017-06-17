@@ -3,3 +3,6 @@
 Sia.iml
 .MyBatisGenerator.bat
 generatorConfig.xml
+.settings
+.classpath
+.project
